@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   front_reactnext:
-    container_name: ddev-${DDEV_SITENAME}-front_reactnext
+    container_name: ddev-${DDEV_SITENAME}-front_react
     image: node:carbon-alpine
     ports:
       - "3000"
@@ -10,7 +10,7 @@ services:
       - pm2:contentajs.ddev.local
       - web:contenta.ddev.local
     volumes:
-      - ../contenta_react_next/reactjs:/app
+      - ../contenta_react:/app
     working_dir: /app
     # Install from the service and start.
     command: sh -c 'yarn install && yarn start:dev'
@@ -21,5 +21,5 @@ services:
       com.ddev.approot: $DDEV_APPROOT
       com.ddev.app-url: $DDEV_URL
     environment:
-      - VIRTUAL_HOST=front-react-next.ddev.local
+      - VIRTUAL_HOST=front-react.ddev.local
       - HTTP_EXPOSE=80:3000

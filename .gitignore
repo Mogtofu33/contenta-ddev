@@ -1,3 +1,7 @@
 /.ddev
 /contentacms
 /contentajs
+/contenta_angular
+/contenta_react
+/contenta_react_next
+contenta*.tar.gz
