@@ -1,0 +1,26 @@
+version: '3.6'
+
+services:
+  pm2:
+    container_name: ddev-${DDEV_SITENAME}-pm2
+    image: keymetrics/pm2:8-alpine
+    ports:
+      - 3000
+    volumes:
+      - ../contentajs:/app
+    working_dir: /app
+    # Install from the service and start.
+    command: sh -c 'npm install && npm start'
+    # Install localy, just start.
+    #command: npm start
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: $DDEV_APPROOT
+      com.ddev.app-url: $DDEV_URL
+    environment:
+      - VIRTUAL_HOST=$DDEV_HOSTNAME
+      - HTTP_EXPOSE=3000
+
+  web:
+    links:
+      - pm2:$DDEV_HOSTNAME

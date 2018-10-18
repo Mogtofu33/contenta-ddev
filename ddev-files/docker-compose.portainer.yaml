@@ -1,0 +1,18 @@
+version: '3.6'
+
+services:
+  portainer:
+    container_name: ddev-${DDEV_SITENAME}-portainer
+    image: portainer/portainer
+    ports:
+      - 9000
+    command: --no-auth -H unix:///var/run/docker.sock
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: $DDEV_APPROOT
+      com.ddev.app-url: $DDEV_URL
+    environment:
+      - VIRTUAL_HOST=$DDEV_HOSTNAME
+      - HTTP_EXPOSE=9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

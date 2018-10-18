@@ -1,0 +1,9 @@
+version: '3.6'
+
+services:
+
+  web:
+    volumes:
+      - "../:/var/www/html:cached"
+      - "../contentacms/web/profiles/contrib/contenta_jsonapi/config/sync:/var/www/html/contentacms/web/sites/default/files/sync:cached"
+      - ".:/mnt/ddev_config:ro"
