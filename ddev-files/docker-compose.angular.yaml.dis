@@ -1,0 +1,25 @@
+version: '3.6'
+
+services:
+  front_angular:
+    container_name: ddev-${DDEV_SITENAME}-front_angular
+    image: node:carbon-alpine
+    ports:
+      - "4200"
+    links:
+      - pm2:contentajs.ddev.local
+      - web:contenta.ddev.local
+    volumes:
+      - ../contenta_angular:/app
+    working_dir: /app
+    # Install from the service and start.
+    command: sh -c 'npm install -g @angular/cli && npm install && ng serve --host 0.0.0.0 --disable-host-check'
+    # Install localy, just start.
+    #command: 'ng serve --host 0.0.0.0 --disable-host-check'
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: $DDEV_APPROOT
+      com.ddev.app-url: $DDEV_URL
+    environment:
+      - VIRTUAL_HOST=front-angular.ddev.local
+      - HTTP_EXPOSE=80:4200

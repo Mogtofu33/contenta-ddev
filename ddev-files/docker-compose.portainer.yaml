@@ -1,5 +1,7 @@
 version: '3.6'
 
+# You can remove or rename this file and run portainer as independant service with :
+# docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock portainer/portainer --no-auth -H unix:///var/run/docker.sock
 services:
   portainer:
     container_name: ddev-${DDEV_SITENAME}-portainer

@@ -1,24 +1,25 @@
 version: '3.6'
 
 services:
-  pm2:
-    container_name: ddev-${DDEV_SITENAME}-pm2
-    image: keymetrics/pm2:8-alpine
+  front_reactnext:
+    container_name: ddev-${DDEV_SITENAME}-front_reactnext
+    image: wodby/node:8.12-0.6.0
     ports:
       - "3000"
     links:
+      - pm2:contentajs.ddev.local
       - web:contenta.ddev.local
     volumes:
-      - ../contentajs:/app
+      - ../contenta_react_next/reactjs:/app
     working_dir: /app
     # Install from the service and start.
-    command: sh -c 'npm install && npm start'
+    command: sh -c 'yarn install && yarn start:dev'
     # Install localy, just start.
-    #command: npm start
+    # #command: yarn start:dev
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
       com.ddev.app-url: $DDEV_URL
     environment:
-      - VIRTUAL_HOST=contentajs.ddev.local
+      - VIRTUAL_HOST=front-react.ddev.local
       - HTTP_EXPOSE=80:3000
