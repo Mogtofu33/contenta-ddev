@@ -17,6 +17,7 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
     - [Restart for Contentajs to connect to ContentaCMS](#restart-for-contentajs-to-connect-to-contentacms)
   - [Usage](#usage)
   - [Consumer example](#consumer-example)
+    - [Vue + Nuxt frontend](#vue--nuxt-frontend)
     - [React + Next frontend](#react--next-frontend)
   - [Issues](#issues)
 
@@ -51,14 +52,29 @@ curl -L https://raw.githubusercontent.com/drud/ddev/master/install_ddev.sh | bas
 
 ```shell
 git clone https://github.com/Mogtofu33/contenta-ddev
+curl -fSL https://github.com/contentacms/contentajs/archive/master.tar.gz -o contenta-ddev.tar.gz
+tar -xzf contenta-ddev.tar.gz
+mv contenta-ddev-master contenta-ddev
 cd contenta-ddev
 ```
 
 ### ContentaCMS
 
+Install with composer locally:
+
 ```shell
 composer create-project contentacms/contenta-jsonapi-project contentacms \
 --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist
+```
+
+If you don't have composer locally you can use [Docker](https://hub.docker.com/_/composer/):
+
+```shell
+docker run --rm --interactive --tty \
+    --volume $PWD:/app \
+    --user $(id -u):$(id -g) \
+      composer create-project contentacms/contenta-jsonapi-project contentacms \
+      --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist -vvv
 ```
 
 ## Init ddev project
@@ -71,7 +87,7 @@ Fix Drupal files tmp permissions (or after install change files tmp folder in Dr
 
 ```shell
 mkdir -p contentacms/web/sites/default/files/tmp
-chmod 777 contentacms/web/sites/default/files
+chmod -R 777 contentacms/web/sites/default/files
 ```
 
 ### Download ContentaJs
@@ -125,7 +141,7 @@ ddev start
 ### Install ContentaCMS
 
 ```shell
-ddev exec drush site-install contenta_jsonapi --verbose --yes \
+d exec drush site-install contenta_jsonapi --verbose --yes \
   --db-url=mysql://db:db@db/db \
   --site-mail=admin@local \
   --account-mail=admin@local \
@@ -134,7 +150,7 @@ ddev exec drush site-install contenta_jsonapi --verbose --yes \
   --account-pass=admin
 ```
 
-### Restart for Contentajs to connect to ContentaCMS
+### Restart for ContentaJJS to connect to ContentaCMS
 
 ```shell
 ddev restart
@@ -156,14 +172,14 @@ ContentaJS
 
 - [http://contentajs.ddev.local/api](http://contentajs.ddev.local/api)
 
-## Consumer example
+## Consumer example (WIP)
 
-### React + Next frontend
+### React + Next frontend (WIP)
 
 Create a hostname for this service in ddev
 
 ```shell
-ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs,front-react-next
+ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs,front-react
 ```
 
 Grab the Sample project and install:
@@ -183,7 +199,6 @@ Prepare React values :
 
 ```shell
 cp contenta_react_next/reactjs/.env.default contenta_react_next/reactjs/.env
-vi contenta_react_next/reactjs/.env
 ```
 
 Change BACKEND_URL
@@ -200,7 +215,55 @@ ddev restart
 
 Access the new frontend from:
 
-- [http://front-react-next.ddev.local](http://front-react-next.ddev.local)
+- [http://front-react.ddev.local](http://front-react.ddev.local)
+
+### Vue + Nuxt frontend (WIP)
+
+Create a hostname for this service in ddev
+
+```shell
+ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs,front-vue
+```
+
+Grab the Sample project and install:
+
+```shell
+curl -fSL https://github.com/contentacms/contenta_vue_nuxt/archive/master.tar.gz -o contenta_vue_nuxt.tar.gz
+tar -xzf contenta_vue_nuxt.tar.gz
+mv contenta_vue_nuxt-master contenta_vue_nuxt
+cp ddev-files/docker-compose.vue_nuxt.yaml.dis .ddev/docker-compose.vue_nuxt.yaml
+```
+
+_Note_: Npm is included in the docker service and used to install this project,
+if you want to install the project locally (npm install), edit and switch _command_
+line in .ddev/docker-compose.vue_nuxt.yaml
+
+Change Nuxt script values in package.json:
+
+```json
+"scripts": {
+  "dev": "HOST=0.0.0.0 node_modules/.bin/nuxt"
+```
+
+Set Nuxt values in _contenta_vue_nuxt/nuxt.config.js_
+
+Change jsonApiUrl
+
+```json
+jsonApiUrl: 'http://contenta.ddev.local/api',
+# ContentaJS access currently fail.
+#jsonApiUrl: 'http://contentajs.ddev.local:3000/api',
+```
+
+Restart ddev
+
+```shell
+ddev restart
+```
+
+Access the new frontend from:
+
+- [http://front-vue.ddev.local](http://front-vue.ddev.local)
 
 ## Issues
 
@@ -210,7 +273,13 @@ ContentaJS:
 
 React + Next consumer:
 
-- Images are loaded from _front-reactnext.ddel.local_ instead of _contenta.ddev.local_
+- Images are loaded from _front-react.ddev.local_ instead of _contenta.ddev.local_
+- 500 issues
+
+Vue + Nuxt consumer:
+
+- Images are loaded from _front-vue.ddev.local_ instead of _contenta.ddev.local_
+- Fail connect to ContentaJS endpoint, work with ContentaCMS api endpoint
 - 500 issues
 
 Angular / React consumers: CORS issues.
