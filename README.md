@@ -172,9 +172,9 @@ ContentaJS
 
 - [http://contentajs.ddev.local/api](http://contentajs.ddev.local/api)
 
-## Consumer example (WIP)
+## Consumer example
 
-### React + Next frontend (WIP)
+### React + Next frontend
 
 Create a hostname for this service in ddev
 
@@ -217,7 +217,7 @@ Access the new frontend from:
 
 - [http://front-react.ddev.local](http://front-react.ddev.local)
 
-### Vue + Nuxt frontend (WIP)
+### Vue + Nuxt frontend
 
 Create a hostname for this service in ddev
 
