@@ -247,12 +247,12 @@ Change Nuxt script values in package.json:
 
 Set Nuxt values in _contenta_vue_nuxt/nuxt.config.js_
 
-Change jsonApiUrl
+Change serverBaseUrl
 
 ```json
-jsonApiUrl: 'http://contenta.ddev.local/api',
+const serverBaseUrl = 'http://contenta.ddev.local',
 # ContentaJS access currently fail.
-#jsonApiUrl: 'http://contentajs.ddev.local:3000/api',
+#const serverBaseUrl = 'http://contentajs.ddev.local',
 ```
 
 Restart ddev
