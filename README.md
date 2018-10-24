@@ -80,7 +80,7 @@ docker run --rm --interactive --tty \
 ## Init ddev project
 
 ```shell
-ddev config --projectname contenta --docroot contentacms/web --webserver-type apache-fpm --additional-hostnames contentajs
+ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs
 ```
 
 Fix Drupal files tmp permissions (or after install change files tmp folder in Drupal settings)
@@ -101,7 +101,7 @@ mv contentajs-master contentajs
 Edit contentajs/package.json and replace _"start"_ with:
 
 ```json
-"start": "npm run build && pm2-runtime start ecosystem.config.js",
+"start": "npm run build && pm2-runtime start ecosystem.config.js --watch",
 ```
 
 Set a local config
@@ -174,12 +174,20 @@ ContentaJS
 
 ## Consumer example
 
+Currently consumers will mostly failed because of ddev router, an Nginx proxy. Here is the [issue](https://github.com/Mogtofu33/contenta-ddev/issues/1).
+Current solution is to open this proxy, each time the stack start / restart you must run:
+
+```shell
+docker exec -d ddev-router sh -c "echo 'proxy_set_header Origin \"\"; add_header \"Access-Control-Allow-Origin\" \"*\" always;' >> /etc/nginx/conf.d/default.conf"
+docker exec -d ddev-router nginx -s reload
+```
+
 ### React + Next frontend
 
 Create a hostname for this service in ddev
 
 ```shell
-ddev config --projectname contenta --docroot contentacms/web --webserver-type apache-fpm --additional-hostnames contentajs,front-react
+ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs,front-react
 ```
 
 Grab the Sample project and install:
@@ -222,7 +230,7 @@ Access the new frontend from:
 Create a hostname for this service in ddev
 
 ```shell
-ddev config --projectname contenta --docroot contentacms/web --webserver-type apache-fpm --additional-hostnames contentajs,front-vue
+ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs,front-vue
 ```
 
 Grab the Sample project and install:
@@ -250,9 +258,9 @@ Set Nuxt values in _contenta_vue_nuxt/nuxt.config.js_
 Change serverBaseUrl
 
 ```json
-const serverBaseUrl = 'http://contenta.ddev.local',
-# ContentaJS access currently fail.
-#const serverBaseUrl = 'http://contentajs.ddev.local',
+const serverBaseUrl = 'http://contentajs.ddev.local',
+# Uncoment to try directly using Drupal
+#const serverBaseUrl = 'http://contenta.ddev.local',
 ```
 
 Restart ddev
@@ -267,12 +275,6 @@ Access the new frontend from:
 
 ## Issues
 
-Cors issuses with ddev nginx.
-
-Cors issues with ddev apache:
-
-- Failed bwith Header _Origin: http://front-vue.ddev.local_, works if _Origin: http://contenta.ddev.local_
-
 ContentaJS:
 
 - api path uri are _contenta.ddev.local_ instead of _contentajs.ddev.local_
@@ -284,6 +286,3 @@ React + Next consumer:
 Vue + Nuxt consumer:
 
 - Images are loaded from _front-vue.ddev.local_ instead of _contenta.ddev.local_
-- Fail connect to ContentaJS endpoint, work with ContentaCMS api endpoint
-
-Angular / React consumers: CORS issues.
