@@ -2,24 +2,23 @@
 
 This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [ContentaJS](https://github.com/contentacms/contentajs#readme) environment stack with [ddev](https://github.com/drud/ddevv).
 
-- [ContentaCMS - ContentaJs with Docker managed by ddev](#contentacms---contentajs-with-docker-managed-by-ddev)
-  - [System Requirements](#system-requirements)
-  - [Features](#features)
-  - [Installation](#installation)
-    - [ddev Installation (Linux example)](#ddev-installation-linux-example)
-    - [Clone this project and get in](#clone-this-project-and-get-in)
-    - [ContentaCMS](#contentacms)
-  - [Init ddev project](#init-ddev-project)
-    - [Download ContentaJs](#download-contentajs)
-    - [Prepare the stack](#prepare-the-stack)
-  - [Launch](#launch)
-    - [Install ContentaCMS](#install-contentacms)
-    - [Restart for Contentajs to connect to ContentaCMS](#restart-for-contentajs-to-connect-to-contentacms)
-  - [Usage](#usage)
-  - [Consumer example](#consumer-example)
-    - [Vue + Nuxt frontend](#vue--nuxt-frontend)
-    - [React + Next frontend](#react--next-frontend)
-  - [Issues](#issues)
+- [System Requirements](#system-requirements)
+- [Features](#features)
+- [Installation](#installation)
+  - [ddev Installation (Linux example)](#ddev-installation-linux-example)
+  - [Clone this project and get in](#clone-this-project-and-get-in)
+  - [ContentaCMS](#contentacms)
+- [Init ddev project](#init-ddev-project)
+  - [Download ContentaJs](#download-contentajs)
+  - [Prepare the stack](#prepare-the-stack)
+- [Launch](#launch)
+  - [Install ContentaCMS](#install-contentacms)
+  - [Restart for Contentajs to connect to ContentaCMS](#restart-for-contentajs-to-connect-to-contentacms)
+- [Usage](#usage)
+- [Consumer example](#consumer-example)
+  - [Vue + Nuxt frontend](#vue--nuxt-frontend)
+  - [React + Next frontend](#react--next-frontend)
+- [Issues](#issues)
 
 ## System Requirements
 
@@ -141,7 +140,7 @@ ddev start
 ### Install ContentaCMS
 
 ```shell
-d exec drush site-install contenta_jsonapi --verbose --yes \
+ddev exec drush site-install contenta_jsonapi --verbose --yes \
   --db-url=mysql://db:db@db/db \
   --site-mail=admin@local \
   --account-mail=admin@local \
@@ -174,8 +173,8 @@ ContentaJS
 
 ## Consumer example
 
-Currently consumers will mostly failed because of ddev router, an Nginx proxy. Here is the [issue](https://github.com/Mogtofu33/contenta-ddev/issues/1).
-Current solution is to open this proxy, each time the stack start / restart you must run:
+Currently consumers will mostly failed with 403 because of ddev router, an Nginx proxy. Here is the [issue](https://github.com/Mogtofu33/contenta-ddev/issues/1).
+A solution is to open this proxy, each time the stack start / restart you must run:
 
 ```shell
 docker exec -d ddev-router sh -c "echo 'proxy_set_header Origin \"\"; add_header \"Access-Control-Allow-Origin\" \"*\" always;' >> /etc/nginx/conf.d/default.conf"
