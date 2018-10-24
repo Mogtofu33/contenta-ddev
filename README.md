@@ -80,7 +80,7 @@ docker run --rm --interactive --tty \
 ## Init ddev project
 
 ```shell
-ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs
+ddev config --projectname contenta --docroot contentacms/web --webserver-type apache-fpm --additional-hostnames contentajs
 ```
 
 Fix Drupal files tmp permissions (or after install change files tmp folder in Drupal settings)
@@ -179,7 +179,7 @@ ContentaJS
 Create a hostname for this service in ddev
 
 ```shell
-ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs,front-react
+ddev config --projectname contenta --docroot contentacms/web --webserver-type apache-fpm --additional-hostnames contentajs,front-react
 ```
 
 Grab the Sample project and install:
@@ -222,7 +222,7 @@ Access the new frontend from:
 Create a hostname for this service in ddev
 
 ```shell
-ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs,front-vue
+ddev config --projectname contenta --docroot contentacms/web --webserver-type apache-fpm --additional-hostnames contentajs,front-vue
 ```
 
 Grab the Sample project and install:
@@ -267,6 +267,12 @@ Access the new frontend from:
 
 ## Issues
 
+Cors issuses with ddev nginx.
+
+Cors issues with ddev apache:
+
+- Failed bwith Header _Origin: http://front-vue.ddev.local_, works if _Origin: http://contenta.ddev.local_
+
 ContentaJS:
 
 - api path uri are _contenta.ddev.local_ instead of _contentajs.ddev.local_
@@ -274,12 +280,10 @@ ContentaJS:
 React + Next consumer:
 
 - Images are loaded from _front-react.ddev.local_ instead of _contenta.ddev.local_
-- 500 issues
 
 Vue + Nuxt consumer:
 
 - Images are loaded from _front-vue.ddev.local_ instead of _contenta.ddev.local_
 - Fail connect to ContentaJS endpoint, work with ContentaCMS api endpoint
-- 500 issues
 
 Angular / React consumers: CORS issues.
