@@ -50,7 +50,7 @@ curl -L https://raw.githubusercontent.com/drud/ddev/master/install_ddev.sh | bas
 ### Clone this project and get in
 
 ```shell
-curl -fSL https://github.com/contentacms/contentajs/archive/master.tar.gz -o contenta-ddev.tar.gz
+curl -fSL https://github.com/Mogtofu33/contenta-ddev/archive/master.tar.gz -o contenta-ddev.tar.gz
 tar -xzf contenta-ddev.tar.gz
 mv contenta-ddev-master contenta-ddev
 cd contenta-ddev
