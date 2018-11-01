@@ -16,8 +16,8 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
   - [Restart for Contentajs to connect to ContentaCMS](#restart-for-contentajs-to-connect-to-contentacms)
 - [Usage](#usage)
 - [Consumer example](#consumer-example)
-  - [Vue + Nuxt frontend](#vue--nuxt-frontend)
   - [React + Next frontend](#react--next-frontend)
+  - [Vue + Nuxt frontend](#vue--nuxt-frontend)
 - [Issues](#issues)
 
 ## System Requirements
@@ -62,7 +62,7 @@ Install with composer locally:
 
 ```shell
 composer create-project contentacms/contenta-jsonapi-project contentacms \
---stability dev --no-interaction --remove-vcs --no-progress --prefer-dist
+  --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist
 ```
 
 If you don't have composer locally you can use [Docker](https://hub.docker.com/_/composer/):
@@ -139,16 +139,10 @@ ddev start
 ### Install ContentaCMS
 
 ```shell
-ddev exec drush site-install contenta_jsonapi --verbose --yes \
-  --db-url=mysql://db:db@db/db \
-  --site-mail=admin@local \
-  --account-mail=admin@local \
-  --site-name="Contenta CMS demo" \
-  --account-name=admin \
-  --account-pass=admin
+ddev exec drush si contenta_jsonapi --account-pass=admin
 ```
 
-### Restart for ContentaJJS to connect to ContentaCMS
+### Restart for ContentaJS to connect to ContentaCMS
 
 ```shell
 ddev restart
@@ -179,6 +173,55 @@ A solution is to open this proxy, each time the stack start / restart you must r
 docker exec -d ddev-router sh -c "echo 'proxy_set_header Origin \"\"; add_header \"Access-Control-Allow-Origin\" \"*\" always;' >> /etc/nginx/conf.d/default.conf"
 docker exec -d ddev-router nginx -s reload
 ```
+
+### Vue + Nuxt frontend
+
+Create a hostname for this service in ddev
+
+```shell
+ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs,front-vue
+```
+
+Grab the Sample project and install:
+
+```shell
+curl -fSL https://github.com/contentacms/contenta_vue_nuxt/archive/master.tar.gz -o contenta_vue_nuxt.tar.gz
+tar -xzf contenta_vue_nuxt.tar.gz
+mv contenta_vue_nuxt-master contenta_vue_nuxt
+cp ddev-files/docker-compose.vue_nuxt.yaml.dis .ddev/docker-compose.vue_nuxt.yaml
+```
+
+_Note_: Npm is included in the docker service and used to install this project,
+if you want to install the project locally (npm install), edit and switch _command_
+line in .ddev/docker-compose.vue_nuxt.yaml
+
+Change Nuxt script values in package.json:
+
+```json
+"scripts": {
+  "dev": "HOST=0.0.0.0 node_modules/.bin/nuxt"
+```
+
+Set Nuxt values in _contenta_vue_nuxt/nuxt.config.js_
+
+Change serverBaseUrl
+
+```json
+const serverBaseUrl = 'http://pm2:3000',
+# Uncoment to try directly using Drupal
+#const serverBaseUrl = 'http://contenta.ddev.local',
+```
+
+Restart ddev
+
+```shell
+ddev restart
+```
+
+Access the new frontend from:
+
+- [http://front-vue.ddev.local](http://front-vue.ddev.local)
+
 
 ### React + Next frontend
 
@@ -222,54 +265,6 @@ ddev restart
 Access the new frontend from:
 
 - [http://front-react.ddev.local](http://front-react.ddev.local)
-
-### Vue + Nuxt frontend
-
-Create a hostname for this service in ddev
-
-```shell
-ddev config --projectname contenta --docroot contentacms/web --additional-hostnames contentajs,front-vue
-```
-
-Grab the Sample project and install:
-
-```shell
-curl -fSL https://github.com/contentacms/contenta_vue_nuxt/archive/master.tar.gz -o contenta_vue_nuxt.tar.gz
-tar -xzf contenta_vue_nuxt.tar.gz
-mv contenta_vue_nuxt-master contenta_vue_nuxt
-cp ddev-files/docker-compose.vue_nuxt.yaml.dis .ddev/docker-compose.vue_nuxt.yaml
-```
-
-_Note_: Npm is included in the docker service and used to install this project,
-if you want to install the project locally (npm install), edit and switch _command_
-line in .ddev/docker-compose.vue_nuxt.yaml
-
-Change Nuxt script values in package.json:
-
-```json
-"scripts": {
-  "dev": "HOST=0.0.0.0 node_modules/.bin/nuxt"
-```
-
-Set Nuxt values in _contenta_vue_nuxt/nuxt.config.js_
-
-Change serverBaseUrl
-
-```json
-const serverBaseUrl = 'http://contentajs.ddev.local',
-# Uncoment to try directly using Drupal
-#const serverBaseUrl = 'http://contenta.ddev.local',
-```
-
-Restart ddev
-
-```shell
-ddev restart
-```
-
-Access the new frontend from:
-
-- [http://front-vue.ddev.local](http://front-vue.ddev.local)
 
 ## Issues
 
