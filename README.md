@@ -24,7 +24,7 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
 - [Docker](https://store.docker.com/search?type=edition&offering=community)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - [ddev](https://github.com/drud/ddev)
-- (Optionnal) [Composer](https://getcomposer.org)
+- (Recomended) [Composer](https://getcomposer.org)
 
 Tested on Ubuntu, referer to [ddev](https://ddev.readthedocs.io/en/latest/#system-requirements) for more details.
 
@@ -37,6 +37,15 @@ Include default ddev stack for Drupal (Nginx, Php 7.1 fpm, Mariadb, PhpMyAdmin) 
 - [Portainer](https://hub.docker.com/r/portainer/portainer) for Docker administration
 
 ## Installation
+
+If you are on Ubuntu 16+, you can try to use the __install.sh__ script included
+to perform an installation of ContentaCMS, ContentaJS and Contenta_vue_nuxt.
+
+```shell
+./install.sh
+```
+
+If it fail you can follow manual steps below.
 
 ### ddev Installation (Linux example)
 
