@@ -181,9 +181,9 @@ cp ddev-files/docker-compose.react_next.yaml.dis .ddev/docker-compose.react_next
 
 _Note_: _Yarn_ is included in the docker service and used to install this project,
 if you want to install the project locally (yarn install), edit and switch
-__command__ line in __.ddev/docker-compose.react_next.yaml__
+__command__ line in __.ddev/docker-compose.react_next.yaml__ file.
 To avoid re-install on each restart you can switch the __command__ after the first
-launch..
+launch.
 
 Prepare React values :
 
