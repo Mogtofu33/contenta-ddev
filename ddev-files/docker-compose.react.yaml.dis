@@ -14,7 +14,7 @@ services:
     working_dir: /app
     # Install from the service and start.
     command: sh -c 'yarn install && yarn start:dev'
-    # Install localy, just start.
+    # Install localy or already installed, just start.
     #command: yarn start:dev
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}

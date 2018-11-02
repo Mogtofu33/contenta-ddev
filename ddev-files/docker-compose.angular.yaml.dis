@@ -14,7 +14,7 @@ services:
     working_dir: /app
     # Install from the service and start.
     command: sh -c 'npm install -g @angular/cli && npm install && ng serve --host 0.0.0.0 --disable-host-check'
-    # Install localy, just start.
+    # Install localy or already installed, just start.
     #command: 'ng serve --host 0.0.0.0 --disable-host-check'
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
