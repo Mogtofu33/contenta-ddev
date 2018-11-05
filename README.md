@@ -4,6 +4,7 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
 
 - [System Requirements](#system-requirements)
 - [Features](#features)
+- [Quick installation](#quick-installation)
 - [Installation](#installation)
   - [ddev Installation (Linux example)](#ddev-installation-linux-example)
   - [Get this project as a starting point](#get-this-project-as-a-starting-point)
@@ -21,10 +22,10 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
 
 ## System Requirements
 
-- [Docker](https://store.docker.com/search?type=edition&offering=community)
-- [Docker Compose](https://docs.docker.com/compose/install/)
-- [ddev](https://github.com/drud/ddev)
-- (Recomended) [Composer](https://getcomposer.org)
+- [Docker 18.06+](https://store.docker.com/search?type=edition&offering=community)
+- [Docker Compose 1.22+](https://docs.docker.com/compose/install/)
+- [ddev v1.3.0+](https://github.com/drud/ddev)
+- (Recomended) [Composer 1.7+](https://getcomposer.org)
 
 Tested on Ubuntu, referer to [ddev](https://ddev.readthedocs.io/en/latest/#system-requirements) for more details.
 
@@ -36,16 +37,22 @@ Include default ddev stack for Drupal (Nginx, Php 7.1 fpm, Mariadb, PhpMyAdmin) 
 - [Redis](https://hub.docker.com/_/redis/), WIP to connect with [ContentaJS](https://github.com/contentacms/contentajs)
 - [Portainer](https://hub.docker.com/r/portainer/portainer) for Docker administration
 
-## Installation
+## Quick installation
 
 If you are on Ubuntu 16+, you can try to use the __install.sh__ script included
 to perform an installation of ContentaCMS, ContentaJS and Contenta_vue_nuxt.
 
 ```shell
+curl -fSL https://github.com/Mogtofu33/contenta-ddev/archive/master.tar.gz -o contenta-ddev.tar.gz
+tar -xzf contenta-ddev.tar.gz && mv contenta-ddev-master contenta-ddev
+cd contenta-ddev
+chmod a+x install.sh
 ./install.sh
 ```
 
 If it fail you can follow manual steps below.
+
+## Installation
 
 ### ddev Installation (Linux example)
 
