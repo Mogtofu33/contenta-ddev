@@ -24,13 +24,11 @@ fi
 
 printf "[info] Download ContentaCMS\\n"
 composer create-project contentacms/contenta-jsonapi-project contentacms \
-  --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist -vvv
+  --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist -v
 
-mkdir -p contentacms/web/sites/default/files/tmp && chmod -R 777 contentacms/web/sites/default/files
-
-# Open CORS on Drupal.
-sed -i "s/- localhost/- '*'/g"  contentacms/web/sites/default/services.yml
-sed -i "s/localhost:/local:/g"  contentacms/web/sites/default/services.yml
+# Hotfix PR https://github.com/contentacms/contenta_jsonapi/pull/333
+curl -fL https://gist.githubusercontent.com/Mogtofu33/5742674ea3235c954d36c2aa7b8eb4ad/raw/a183fd49cfc8fccbed9cea33aa53f31c309ad333/EntityNormalizer.php -o EntityNormalizer.php
+mv EntityNormalizer.php contentacms/web/modules/contrib/jsonapi/src/Normalizer/
 
 printf "[info] Init ddev project\\n"
 ddev config --projectname contenta --docroot contentacms/web \
@@ -69,7 +67,20 @@ printf "[info] Start ddev\\n"
 ddev start
 
 printf "[info] Install ContentaCMS\\n"
+mkdir -p ./contentacms/web/sites/default/files/tmp && mkdir -p ./contentacms/web/sites/default/files/sync
+chmod -R 777 ./contentacms/web/sites/default/files
+cp -r ./contentacms/web/profiles/contrib/contenta_jsonapi/config/sync/*.yml ./contentacms/web/sites/default/files/sync/
 ddev exec drush si contenta_jsonapi --account-pass=admin --verbose
+
+# Open CORS on Drupal.
+sed -i "s/- localhost/- '*'/g"  contentacms/web/sites/default/services.yml
+sed -i "s/localhost:/local:/g"  contentacms/web/sites/default/services.yml
+
+# Avoid install on restart for npm / yarn.
+sed -i 's/command: sh -c/#command: sh -c/g' .ddev/docker-compose.pm2.yaml
+sed -i 's/#command: npm/command: npm/g' .ddev/docker-compose.pm2.yaml
+sed -i 's/command: sh -c/#command: sh -c/g' .ddev/docker-compose.vue_nuxt.yaml
+sed -i 's/#command: npm/command: npm/g' .ddev/docker-compose.vue_nuxt.yaml
 
 printf "[info] Restart ddev\\n"
 ddev restart
