@@ -1,6 +1,6 @@
 # ContentaCMS - ContentaJs with Docker managed by ddev
 
-This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [ContentaJS](https://github.com/contentacms/contentajs#readme) environment stack with [ddev](https://github.com/drud/ddevv).
+This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [ContentaJS](https://github.com/contentacms/contentajs#readme) environment stack with [ddev](https://github.com/drud/ddev).
 
 - [System Requirements](#system-requirements)
 - [Features](#features)
@@ -174,6 +174,7 @@ Set Nuxt values in __contenta_vue_nuxt/nuxt.config.js__, change __serverBaseUrl_
 
 ```json
 const serverBaseUrl = 'http://contentajs.ddev.local';
+const serverFilesUrl = 'http://contenta.ddev.local';
 ```
 
 #### (Optionnal) React + Next frontend
@@ -263,7 +264,3 @@ ContentaJS:
 React + Next consumer:
 
 - Images are loaded from _front-react.ddev.local_ instead of _contenta.ddev.local_
-
-Vue + Nuxt consumer:
-
-- Images are loaded from _front-vue.ddev.local_ instead of _contenta.ddev.local_, see this [PR](https://github.com/contentacms/contenta_vue_nuxt/pull/48)
