@@ -28,6 +28,10 @@ composer create-project contentacms/contenta-jsonapi-project contentacms \
 
 mkdir -p contentacms/web/sites/default/files/tmp && chmod -R 777 contentacms/web/sites/default/files
 
+# Open CORS on Drupal.
+sed -i "s/- localhost/- '*'/g"  contentacms/web/sites/default/services.yml
+sed -i "s/localhost:/local:/g"  contentacms/web/sites/default/services.yml
+
 printf "[info] Init ddev project\\n"
 ddev config --projectname contenta --docroot contentacms/web \
   --additional-hostnames contentajs,front-vue
@@ -35,6 +39,7 @@ ddev config --projectname contenta --docroot contentacms/web \
 printf "[info] Install ContentaJS\\n"
 curl -fSL https://github.com/contentacms/contentajs/archive/master.tar.gz -o contenta.tar.gz
 tar -xzf contenta.tar.gz && mv contentajs-master contentajs
+rm -f contenta.tar.gz
 
 sed -i 's#node ./node_modules/.bin/pm2 start --name contentajs --env production#pm2-runtime start ecosystem.config.js#g' contentajs/package.json
 sed -i 's/3000/80/g' contentajs/ecosystem.config.js
@@ -52,10 +57,13 @@ cp ddev-files/*.yaml .ddev
 printf "[info] Install Contenta Vue consumer\\n"
 curl -fSL https://github.com/contentacms/contenta_vue_nuxt/archive/master.tar.gz -o contenta_vue_nuxt.tar.gz
 tar -xzf contenta_vue_nuxt.tar.gz && mv contenta_vue_nuxt-master contenta_vue_nuxt
+rm -f contenta_vue_nuxt.tar.gz
+
 cp ddev-files/docker-compose.vue_nuxt.yaml.dis .ddev/docker-compose.vue_nuxt.yaml
 
 sed -i 's#"dev": "nuxt"#"dev": "HOST=0.0.0.0 node_modules/.bin/nuxt"#g' contenta_vue_nuxt/package.json
-sed -i 's#https://back-end.contentacms.io#http://contentajs.ddev.local#g' contenta_vue_nuxt/nuxt.config.js
+sed -i "s#serverBaseUrl = 'https://back-end.contentacms.io'#serverBaseUrl = 'http://contentajs.ddev.local'#g" contenta_vue_nuxt/nuxt.config.js
+sed -i "s#serverFilesUrl = 'https://back-end.contentacms.io'#serverFilesUrl = 'http://contenta.ddev.local'#g" contenta_vue_nuxt/nuxt.config.js
 
 printf "[info] Start ddev\\n"
 ddev start
@@ -63,5 +71,5 @@ ddev start
 printf "[info] Install ContentaCMS\\n"
 ddev exec drush si contenta_jsonapi --account-pass=admin --verbose
 
-printf "[info] retart ddev\\n"
+printf "[info] Restart ddev\\n"
 ddev restart
