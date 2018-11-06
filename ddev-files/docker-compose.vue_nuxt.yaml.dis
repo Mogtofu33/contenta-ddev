@@ -3,7 +3,7 @@ version: '3.6'
 services:
   front_vue:
     container_name: ddev-${DDEV_SITENAME}-front_vue
-    image: node:carbon-alpine
+    image: node:dubnium-alpine
     ports:
       - "3000"
     links:
