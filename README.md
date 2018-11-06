@@ -5,10 +5,11 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
 - [System Requirements](#system-requirements)
 - [Features](#features)
 - [Quick installation](#quick-installation)
-- [Installation](#installation)
+- [Manual installation](#manual-installation)
   - [ddev Installation (Linux example)](#ddev-installation-linux-example)
   - [Get this project as a starting point](#get-this-project-as-a-starting-point)
   - [ContentaCMS](#contentacms)
+- [Prepare config](#prepare-config)
 - [Init ddev project with hostnames](#init-ddev-project-with-hostnames)
   - [Download ContentaJs](#download-contentajs)
   - [Prepare the stack](#prepare-the-stack)
@@ -52,7 +53,7 @@ chmod a+x install.sh
 
 If it fail you can follow manual steps below.
 
-## Installation
+## Manual installation
 
 ### ddev Installation (Linux example)
 
@@ -89,6 +90,14 @@ docker run --rm --interactive --tty \
       --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist -vvv
 ```
 
+Until [PR 333](https://github.com/contentacms/contenta_jsonapi/pull/333) is resolved, apply this [patch](https://www.drupal.org/project/jsonapi/issues/3011836)
+
+## Prepare config
+
+Copy config from ContentaCMS to ddev _sync_ folder:
+
+cp -r ./contentacms/web/profiles/contrib/contenta_jsonapi/config/sync/*.yml ./contentacms/web/sites/default/files/sync/
+
 ## Init ddev project with hostnames
 
 ```shell
@@ -96,10 +105,12 @@ ddev config --projectname contenta --docroot contentacms/web \
   --additional-hostnames contentajs,front-vue,front-react
 ```
 
-Fix Drupal files tmp permissions (or after install change files tmp folder in Drupal settings)
+Fix Drupal files tmp permissions and copy config
 
 ```shell
-mkdir -p contentacms/web/sites/default/files/tmp && chmod -R 777 contentacms/web/sites/default/files
+mkdir -p ./contentacms/web/sites/default/files/tmp && mkdir -p ./contentacms/web/sites/default/files/sync
+chmod -R 777 ./contentacms/web/sites/default/files
+cp -r ./contentacms/web/profiles/contrib/contenta_jsonapi/config/sync/*.yml ./contentacms/web/sites/default/files/sync/
 ```
 
 ### Download ContentaJs
@@ -255,7 +266,19 @@ If installed, access the react frontend from:
 
 - [http://front-react.ddev.local](http://front-vue.ddev.local)
 
+ddev include PhpMyAdmin:
+
+- [http://contenta.ddev.local:8036](http://contenta.ddev.local:8036)
+
+And Mailhog:
+
+- [http://contenta.ddev.local:8025](http://contenta.ddev.local:8025)
+
 ## Issues
+
+ContentaCMS (jsonapi):
+
+- Error getIncludes(), patch from: [https://www.drupal.org/project/jsonapi/issues/3011836](https://www.drupal.org/project/jsonapi/issues/3011836)
 
 ContentaJS:
 
