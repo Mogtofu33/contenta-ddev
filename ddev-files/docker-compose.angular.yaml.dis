@@ -5,7 +5,7 @@ services:
     container_name: ddev-${DDEV_SITENAME}-front_angular
     image: node:carbon-alpine
     ports:
-      - "4200"
+      - 4200
     links:
       - pm2:contentajs.ddev.local
       - web:contenta.ddev.local

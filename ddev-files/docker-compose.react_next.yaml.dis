@@ -5,7 +5,7 @@ services:
     container_name: ddev-${DDEV_SITENAME}-front_react
     image: node:carbon-alpine
     ports:
-      - "3000"
+      - 3000
     links:
       - pm2:contentajs.ddev.local
       - web:contenta.ddev.local
