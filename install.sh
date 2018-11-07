@@ -57,8 +57,6 @@ sed -i 's#"dev": "nuxt"#"dev": "HOST=0.0.0.0 node_modules/.bin/nuxt"#g' contenta
 sed -i "s#serverBaseUrl = 'https://back-end.contentacms.io'#serverBaseUrl = 'http://contentajs.ddev.local'#g" contenta_vue_nuxt/nuxt.config.js
 sed -i "s#serverFilesUrl = 'https://back-end.contentacms.io'#serverFilesUrl = 'http://contenta.ddev.local'#g" contenta_vue_nuxt/nuxt.config.js
 
-cp ddev-files/docker-compose.vue_nuxt.yaml.dis .ddev/docker-compose.vue_nuxt.yaml
-
 printf "[info] Init ddev project\\n"
 if ! [ -d "./contentacms/web/sites/default" ]; then
   mkdir -p ./contentacms/web/sites/default
@@ -73,6 +71,7 @@ fi
 
 printf "[info] Start ddev\\n"
 cp ddev-files/*.yaml .ddev
+cp ddev-files/docker-compose.vue_nuxt.yaml.dis .ddev/docker-compose.vue_nuxt.yaml
 ddev start
 
 printf "[info] Download ContentaCMS with Composer from ddev\\n"
