@@ -41,10 +41,19 @@ rm -f contenta.tar.gz
 
 sed -i 's#node ./node_modules/.bin/pm2 start --name contentajs --env production#pm2-runtime start ecosystem.config.js#g' contentajs/package.json
 sed -i 's/3000/80/g' contentajs/ecosystem.config.js
+sed -i 's/watch: false/watch: true/g' contentajs/ecosystem.config.js
 
 cat >contentajs/config/local.yml <<EOL
 cms:
   host: http://contenta.ddev.local
+got:
+  applicationCache:
+    activePlugin: redis
+    plugins:
+      redis:
+        host: redis
+        port: 6379
+        prefix: 'contentajs::'
 cors:
   origin:
     - '*'

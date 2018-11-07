@@ -5,7 +5,7 @@ services:
     container_name: ddev-${DDEV_SITENAME}-pm2
     image: keymetrics/pm2:8-alpine
     ports:
-      - "80"
+      - 80
     links:
       - web:contenta.ddev.local
     volumes:
@@ -13,6 +13,7 @@ services:
     working_dir: /app
     # Install from the service and start.
     command: sh -c 'npm install && npm start'
+    # command: sh -c 'npm install && yarn add https://github.com/contentacms/contentajsRedis/archive/master.tar.gz && npm start'
     # Install localy or already installed, just start.
     #command: npm start
     labels:

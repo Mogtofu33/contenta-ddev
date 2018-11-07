@@ -9,7 +9,6 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
   - [ddev Installation (Linux example)](#ddev-installation-linux-example)
   - [Get this project as a starting point](#get-this-project-as-a-starting-point)
   - [ContentaCMS](#contentacms)
-- [Prepare config](#prepare-config)
 - [Init ddev project with hostnames](#init-ddev-project-with-hostnames)
   - [Download ContentaJs](#download-contentajs)
   - [Prepare the stack](#prepare-the-stack)
@@ -35,7 +34,7 @@ Tested on Ubuntu, referer to [ddev](https://ddev.readthedocs.io/en/latest/#syste
 Include default ddev stack for Drupal (Nginx, Php 7.1 fpm, Mariadb, PhpMyAdmin) and extra services:
 
 - [Pm2](http://pm2.keymetrics.io/docs/usage/docker-pm2-nodejs/) to run [ContentaJS](https://github.com/contentacms/contentajs)
-- [Redis](https://hub.docker.com/_/redis/), WIP to connect with [ContentaJS](https://github.com/contentacms/contentajs)
+- [Redis (WIP)](https://hub.docker.com/_/redis/), WIP to connect with [ContentaJS](https://github.com/contentacms/contentajs)
 - [Portainer](https://hub.docker.com/r/portainer/portainer) for Docker administration
 
 ## Quick installation
@@ -50,6 +49,8 @@ cd contenta-ddev
 chmod a+x install.sh
 ./install.sh
 ```
+
+If everything is good got to [Usage](#usage).
 
 If it fail you can follow manual steps below.
 
@@ -92,12 +93,6 @@ docker run --rm --interactive --tty \
 
 Until [PR 333](https://github.com/contentacms/contenta_jsonapi/pull/333) is resolved, apply this [patch](https://www.drupal.org/project/jsonapi/issues/3011836)
 
-## Prepare config
-
-Copy config from ContentaCMS to ddev _sync_ folder:
-
-cp -r ./contentacms/web/profiles/contrib/contenta_jsonapi/config/sync/*.yml ./contentacms/web/sites/default/files/sync/
-
 ## Init ddev project with hostnames
 
 ```shell
@@ -137,7 +132,14 @@ Create a local config in __contentajs/config/local.yml__
 ```yaml
 cms:
   host: http://contenta.ddev.local
-
+got:
+  applicationCache:
+    activePlugin: redis
+    plugins:
+      redis:
+        host: redis
+        port: 6379
+        prefix: 'contentajs::'
 cors:
   origin:
     # It's OK to use '*' in local development.
