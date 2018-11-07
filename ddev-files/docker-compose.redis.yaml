@@ -1,0 +1,22 @@
+version: '3.6'
+
+services:
+  redis:
+    container_name: ddev-${DDEV_SITENAME}-redis
+    image: redis:alpine
+    ports:
+      - 6379
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+  redis-commander:
+    container_name: ddev-${DDEV_SITENAME}-redis-commander
+    image: rediscommander/redis-commander:latest
+    ports:
+      - 8081
+    restart: always
+    environment:
+    - REDIS_HOSTS=local:redis:6379
+    - VIRTUAL_HOST=$DDEV_HOSTNAME
+    - HTTP_EXPOSE=8081
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
