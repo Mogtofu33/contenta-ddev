@@ -2,44 +2,42 @@
 
 This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [ContentaJS](https://github.com/contentacms/contentajs#readme) environment stack with [ddev](https://github.com/drud/ddev).
 
-- [System Requirements](#system-requirements)
-- [Features](#features)
-- [Quick installation](#quick-installation)
-- [Manual installation](#manual-installation)
-  - [ddev Installation (Linux example)](#ddev-installation-linux-example)
-  - [Get this project as a starting point](#get-this-project-as-a-starting-point)
-  - [ContentaCMS](#contentacms)
-- [Init ddev project with hostnames](#init-ddev-project-with-hostnames)
-  - [Download ContentaJs](#download-contentajs)
-  - [Prepare the stack](#prepare-the-stack)
+- [ContentaCMS - ContentaJs with Docker managed by ddev](#contentacms---contentajs-with-docker-managed-by-ddev)
+  - [System Requirements](#system-requirements)
+  - [Features](#features)
+  - [Quick installation](#quick-installation)
+  - [Manual installation](#manual-installation)
+    - [ddev Installation (Linux example)](#ddev-installation-linux-example)
+    - [Grab this project as a starting point](#grab-this-project-as-a-starting-point)
+    - [Download ContentaJs](#download-contentajs)
+    - [Init ddev project](#init-ddev-project)
+    - [Download ContentaCMS](#download-contentacms)
+    - [Install ContentaCMS](#install-contentacms)
+    - [Restart for ContentaJS to connect to ContentaCMS](#restart-for-contentajs-to-connect-to-contentacms)
     - [(Optionnal) Vue + Nuxt frontend](#optionnal-vue--nuxt-frontend)
     - [(Optionnal) React + Next frontend](#optionnal-react--next-frontend)
-- [Launch](#launch)
-  - [Install ContentaCMS](#install-contentacms)
-  - [Restart for ContentaJS to connect to ContentaCMS](#restart-for-contentajs-to-connect-to-contentacms)
-- [Usage](#usage)
-- [Issues](#issues)
+  - [Usage](#usage)
+  - [Issues](#issues)
 
 ## System Requirements
 
 - [Docker 18.06+](https://store.docker.com/search?type=edition&offering=community)
 - [Docker Compose 1.22+](https://docs.docker.com/compose/install/)
 - [ddev v1.3.0+](https://github.com/drud/ddev)
-- (Recomended) [Composer 1.7+](https://getcomposer.org)
 
-Tested on Ubuntu, referer to [ddev](https://ddev.readthedocs.io/en/latest/#system-requirements) for more details.
+Tested on Ubuntu, see [ddev](https://ddev.readthedocs.io/en/latest/#system-requirements) for more details.
 
 ## Features
 
-Include default ddev stack for Drupal (Nginx, Php 7.1 fpm, Mariadb, PhpMyAdmin) and extra services:
+Include default ddev stack for Drupal (Nginx, Php 7.1 fpm, Mariadb, PhpMyAdmin, Mailhog) and extra services:
 
 - [Pm2](http://pm2.keymetrics.io/docs/usage/docker-pm2-nodejs/) to run [ContentaJS](https://github.com/contentacms/contentajs)
-- [Redis (WIP)](https://hub.docker.com/_/redis/), WIP to connect with [ContentaJS](https://github.com/contentacms/contentajs)
+- [Redis (WIP)](https://hub.docker.com/_/redis/), to connect with [ContentaJS](https://github.com/contentacms/contentajs)
 - [Portainer](https://hub.docker.com/r/portainer/portainer) for Docker administration
 
 ## Quick installation
 
-If you are on Ubuntu 16+, you can try to use the __install.sh__ script included
+If you are on Ubuntu 16+/Debian, you can try to use the __install.sh__ script included
 to perform an installation of ContentaCMS, ContentaJS and Contenta_vue_nuxt.
 
 ```shell
@@ -50,7 +48,7 @@ chmod a+x install.sh
 ./install.sh
 ```
 
-If everything is good got to [Usage](#usage).
+If everything is good go to section [Usage](#usage).
 
 If it fail you can follow manual steps below.
 
@@ -64,48 +62,12 @@ If it fail you can follow manual steps below.
 curl -L https://raw.githubusercontent.com/drud/ddev/master/install_ddev.sh | bash
 ```
 
-### Get this project as a starting point
+### Grab this project as a starting point
 
 ```shell
 curl -fSL https://github.com/Mogtofu33/contenta-ddev/archive/master.tar.gz -o contenta-ddev.tar.gz
 tar -xzf contenta-ddev.tar.gz && mv contenta-ddev-master contenta-ddev
 cd contenta-ddev
-```
-
-### ContentaCMS
-
-Vanilla install with composer locally:
-
-```shell
-composer create-project contentacms/contenta-jsonapi-project contentacms \
-  --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist -vvv
-```
-
-_OR_ if you don't have Composer locally you can use [Docker library](https://hub.docker.com/_/composer/):
-
-```shell
-docker run --rm --interactive --tty \
-    --volume $PWD:/app \
-    --user $(id -u):$(id -g) \
-      composer create-project contentacms/contenta-jsonapi-project contentacms \
-      --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist -vvv
-```
-
-Until [PR 333](https://github.com/contentacms/contenta_jsonapi/pull/333) is resolved, apply this [patch](https://www.drupal.org/project/jsonapi/issues/3011836)
-
-## Init ddev project with hostnames
-
-```shell
-ddev config --projectname contenta --docroot contentacms/web \
-  --additional-hostnames contentajs,front-vue,front-react
-```
-
-Fix Drupal files tmp permissions and copy config
-
-```shell
-mkdir -p ./contentacms/web/sites/default/files/tmp && mkdir -p ./contentacms/web/sites/default/files/sync
-chmod -R 777 ./contentacms/web/sites/default/files
-cp -r ./contentacms/web/profiles/contrib/contenta_jsonapi/config/sync/*.yml ./contentacms/web/sites/default/files/sync/
 ```
 
 ### Download ContentaJs
@@ -146,7 +108,15 @@ cors:
     - '*'
 ```
 
-### Prepare the stack
+### Init ddev project
+
+Prepare contentaCMS folders and init the project
+
+```shell
+mkdir -p ./contentacms/web/sites/default
+ddev config --projecttype drupal8 --projectname contenta --docroot contentacms/web \
+  --additional-hostnames contentajs,front-vue,front-react
+```
 
 Copy specific Contenta files from __ddev-files__ in __.ddev__ folder
 
@@ -160,7 +130,65 @@ __command__ line in __.ddev/docker-compose.pm2.yaml__ file.
 To avoid re-install on each restart you can switch the __command__ after the first
 launch.
 
-#### (Optionnal) Vue + Nuxt frontend
+```shell
+ddev start
+```
+
+### Download ContentaCMS
+
+Install with Composer within ddev
+
+```shell
+ddev exec composer create-project contentacms/contenta-jsonapi-project /tmp/contentacms \
+  --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist -v
+ddev exec cp -r /tmp/contentacms/ /var/www/html/
+ddev exec rm -rf /tmp/contentacms/
+```
+
+Create tmp folder and copy ContentaCMS config to match ddev requirements
+
+```shell
+mkdir -p contentacms/web/sites/default/files/tmp && mkdir -p contentacms/web/sites/default/files/sync
+cp -r contentacms/web/profiles/contrib/contenta_jsonapi/config/sync/ contentacms/web/sites/default/files/
+```
+
+Until [PR 333](https://github.com/contentacms/contenta_jsonapi/pull/333) is resolved, apply this [patch](https://www.drupal.org/project/jsonapi/issues/3011836)
+
+For convenience here is a patched file to replace
+
+```shell
+curl -fL https://gist.githubusercontent.com/Mogtofu33/5742674ea3235c954d36c2aa7b8eb4ad/raw/a183fd49cfc8fccbed9cea33aa53f31c309ad333/EntityNormalizer.php \
+  -o contentacms/web/modules/contrib/jsonapi/src/Normalizer/EntityNormalizer.php
+```
+
+### Install ContentaCMS
+
+```shell
+# Ensure settings and permissions by running ddev config again.
+ddev config --projecttype drupal8 --projectname contenta --docroot contentacms/web \
+  --additional-hostnames contentajs,front-vue,front-react
+ddev exec drush si contenta_jsonapi --account-pass=admin --verbose
+rm -rf contentacms/keys
+```
+
+Open CORS on ContentaCMS, edit __contentacms/web/sites/default/services.yml__ and
+replace __allowedOrigins__
+
+```yml
+    allowedOrigins:
+      - '*'
+```
+
+### Restart for ContentaJS to connect to ContentaCMS
+
+_Note_: You can edit and switch __command__ line in __.ddev/docker-compose.pm2.yaml__ file.
+To avoid re-install on restart.
+
+```shell
+ddev restart
+```
+
+### (Optionnal) Vue + Nuxt frontend
 
 - [https://github.com/contentacms/contenta_vue_nuxt](https://github.com/contentacms/contenta_vue_nuxt)
 
@@ -190,7 +218,11 @@ const serverBaseUrl = 'http://contentajs.ddev.local';
 const serverFilesUrl = 'http://contenta.ddev.local';
 ```
 
-#### (Optionnal) React + Next frontend
+```shell
+ddev restart
+```
+
+### (Optionnal) React + Next frontend
 
 - [https://github.com/contentacms/contenta_react_next](https://github.com/contentacms/contenta_react_next)
 
@@ -218,28 +250,6 @@ Edit __reactjs/.env__ and set BACKEND_URL
 BACKEND_URL=http://contentajs.ddev.local
 ```
 
-## Launch
-
-```shell
-ddev start
-```
-
-### Install ContentaCMS
-
-```shell
-ddev exec drush si contenta_jsonapi --account-pass=admin
-```
-
-Open CORS on ContentaCMS, edit __contentacms/web/sites/default/services.yml__ and
-replace __allowedOrigins__
-
-```yml
-    allowedOrigins:
-      - '*'
-```
-
-### Restart for ContentaJS to connect to ContentaCMS
-
 ```shell
 ddev restart
 ```
@@ -247,10 +257,6 @@ ddev restart
 ## Usage
 
 For all ddev commands see [https://ddev.readthedocs.io/en/latest/users/cli-usage](https://ddev.readthedocs.io/en/latest/users/cli-usage)
-
-This stack include a Docker web UI, you can access it on port 9000
-
-- [http://contenta.ddev.local:9000](http://contenta.ddev.local:9000)
 
 ContentaCMS Backoffice
 
@@ -260,19 +266,27 @@ ContentaJS
 
 - [http://contentajs.ddev.local/api](http://contentajs.ddev.local/api)
 
-If installed, access the vue frontend from:
+If installed, access the vue frontend
 
 - [http://front-vue.ddev.local](http://front-vue.ddev.local)
 
-If installed, access the react frontend from:
+If installed, access the react frontend
 
 - [http://front-react.ddev.local](http://front-vue.ddev.local)
 
-ddev include PhpMyAdmin:
+Docker web UI, you can access it on port 9000
+
+- [http://contenta.ddev.local:9000](http://contenta.ddev.local:9000)
+
+Redis commander on port 8081
+
+- [http://contenta.ddev.local:8081](http://contenta.ddev.local:8081)
+
+PhpMyAdmin on port 8036
 
 - [http://contenta.ddev.local:8036](http://contenta.ddev.local:8036)
 
-And Mailhog:
+Mailhog on port 8025
 
 - [http://contenta.ddev.local:8025](http://contenta.ddev.local:8025)
 
