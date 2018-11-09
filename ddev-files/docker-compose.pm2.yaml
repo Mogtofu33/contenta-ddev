@@ -12,8 +12,7 @@ services:
       - ../contentajs:/app
     working_dir: /app
     # Install from the service and start.
-    command: sh -c 'npm install && npm start'
-    # command: sh -c 'npm install && yarn add https://github.com/contentacms/contentajsRedis/archive/master.tar.gz && npm start'
+    command: sh -c 'npm install --no-audit && npm install @contentacms/redis --no-audit && npm start'
     # Install localy or already installed, just start.
     #command: npm start
     labels:
