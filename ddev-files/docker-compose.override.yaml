@@ -3,5 +3,8 @@ version: '3.6'
 services:
 
   web:
+    # Mount local composer cache if needed.
+    # volumes:
+      # - ~/.composer/cache:/home/.composer/cache
     environment:
       -  VIRTUAL_HOST=contenta.ddev.local
