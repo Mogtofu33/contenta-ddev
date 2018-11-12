@@ -2,22 +2,20 @@
 
 This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [ContentaJS](https://github.com/contentacms/contentajs#readme) environment stack with [ddev](https://github.com/drud/ddev).
 
-- [ContentaCMS - ContentaJs with Docker managed by ddev](#contentacms---contentajs-with-docker-managed-by-ddev)
-  - [System Requirements](#system-requirements)
-  - [Features](#features)
-  - [Quick installation](#quick-installation)
-  - [Manual installation](#manual-installation)
-    - [ddev Installation (Linux example)](#ddev-installation-linux-example)
-    - [Grab this project as a starting point](#grab-this-project-as-a-starting-point)
-    - [Download ContentaJs](#download-contentajs)
-    - [Init ddev project](#init-ddev-project)
-    - [Download ContentaCMS](#download-contentacms)
-    - [Install ContentaCMS](#install-contentacms)
-    - [Restart for ContentaJS to connect to ContentaCMS](#restart-for-contentajs-to-connect-to-contentacms)
-    - [(Optionnal) Vue + Nuxt frontend](#optionnal-vue--nuxt-frontend)
-    - [(Optionnal) React + Next frontend](#optionnal-react--next-frontend)
-  - [Usage](#usage)
-  - [Issues](#issues)
+- [System Requirements](#system-requirements)
+- [Features](#features)
+- [Quick installation](#quick-installation)
+- [Manual installation](#manual-installation)
+  - [ddev Installation (Linux example)](#ddev-installation-linux-example)
+  - [Grab this project as a starting point](#grab-this-project-as-a-starting-point)
+  - [Download ContentaJs](#download-contentajs)
+  - [Init ddev project](#init-ddev-project)
+  - [Download ContentaCMS](#download-contentacms)
+  - [Install ContentaCMS](#install-contentacms)
+  - [Restart for ContentaJS to connect to ContentaCMS](#restart-for-contentajs-to-connect-to-contentacms)
+  - [(Optionnal) Vue + Nuxt frontend](#optionnal-vue--nuxt-frontend)
+- [Usage](#usage)
+- [Issues](#issues)
 
 ## System Requirements
 
@@ -73,20 +71,21 @@ cd contenta-ddev
 ### Download ContentaJs
 
 ```shell
-curl -fSL https://github.com/contentacms/contentajs/archive/master.tar.gz -o contenta.tar.gz
-tar -xzf contenta.tar.gz && mv contentajs-master contentajs
+curl -fSL https://github.com/contentacms/contentajs/archive/master.tar.gz -o contentajs.tar.gz
+tar -xzf contentajs.tar.gz && mv contentajs-master contentajs
 ```
 
 Edit __contentajs/package.json__ and replace __start__ with:
 
 ```json
-"start": "npm run build && pm2-runtime start ecosystem.config.js",
+    "start": "npm run build && PM2_HOME=/home/node/app pm2-runtime start ecosystem.config.js --name contentajs --no-auto-exit",
 ```
 
-Edit __contentajs/ecosystem.config.js__ and replace listening __port__ to __80__ (set __watch__ to _true_ for dev):
+Edit __contentajs/ecosystem.config.js__ set __watch__ to _true_ for dev and add __ignore_watch__:
 
 ```json
-port: 80,
+    watch: true,
+    ignore_watch: ["node_modules", "client/img", "logs", "pids", "touch", "pm2.pid", "rpc.sock", "pub.sock"],
 ```
 
 Create a local config in __contentajs/config/local.yml__
@@ -115,7 +114,7 @@ Prepare contentaCMS folders and init the project
 ```shell
 mkdir -p ./contentacms/web/sites/default
 ddev config --projecttype drupal8 --projectname contenta --docroot contentacms/web \
-  --additional-hostnames contentajs,front-vue,front-react
+  --additional-hostnames front-vue,front-react
 ```
 
 Copy specific Contenta files from __ddev-files__ in __.ddev__ folder
@@ -157,7 +156,7 @@ Until [PR 333](https://github.com/contentacms/contenta_jsonapi/pull/333) is reso
 For convenience here is a patched file to replace
 
 ```shell
-curl -fL https://gist.githubusercontent.com/Mogtofu33/5742674ea3235c954d36c2aa7b8eb4ad/raw/a183fd49cfc8fccbed9cea33aa53f31c309ad333/EntityNormalizer.php \
+curl -fSL https://gist.githubusercontent.com/Mogtofu33/5742674ea3235c954d36c2aa7b8eb4ad/raw/a183fd49cfc8fccbed9cea33aa53f31c309ad333/EntityNormalizer.php \
   -o contentacms/web/modules/contrib/jsonapi/src/Normalizer/EntityNormalizer.php
 ```
 
@@ -166,9 +165,8 @@ curl -fL https://gist.githubusercontent.com/Mogtofu33/5742674ea3235c954d36c2aa7b
 ```shell
 # Ensure settings and permissions by running ddev config again.
 ddev config --projecttype drupal8 --projectname contenta --docroot contentacms/web \
-  --additional-hostnames contentajs,front-vue,front-react
+  --additional-hostnames front-vue,front-react
 ddev exec drush si contenta_jsonapi --account-pass=admin --verbose
-rm -rf contentacms/keys
 ```
 
 Open CORS on ContentaCMS, edit __contentacms/web/sites/default/services.yml__ and
@@ -180,6 +178,13 @@ replace __allowedOrigins__
 ```
 
 ### Restart for ContentaJS to connect to ContentaCMS
+
+Before restarting, ensure ContentaJS is installed by checking if there is a file __contentajs/pm2.pid__.
+If not, wait until this file is created. You can check logs with:
+
+```shell
+ddev logs -s pm2
+```
 
 _Note_: You can edit and switch __command__ line in __.ddev/docker-compose.pm2.yaml__ file.
 To avoid re-install on restart.
@@ -214,44 +219,12 @@ Change Nuxt script values in __package.json__:
 Set Nuxt values in __contenta_vue_nuxt/nuxt.config.js__, change __serverBaseUrl__:
 
 ```json
-const serverBaseUrl = 'http://contentajs.ddev.local';
+const serverBaseUrl = 'http://pm2:3000';
 const serverFilesUrl = 'http://contenta.ddev.local';
 ```
 
 ```shell
-ddev restart
-```
-
-### (Optionnal) React + Next frontend
-
-- [https://github.com/contentacms/contenta_react_next](https://github.com/contentacms/contenta_react_next)
-
-```shell
-curl -fSL https://github.com/contentacms/contenta_react_next/archive/master.tar.gz -o contenta_react_next.tar.gz
-tar -xzf contenta_react_next.tar.gz && mv contenta_react_next-master contenta_react_next
-cp ddev-files/docker-compose.react_next.yaml.dis .ddev/docker-compose.react_next.yaml
-```
-
-_Note_: _Yarn_ is included in the docker service and used to install this project,
-if you want to install the project locally (yarn install), edit and switch
-__command__ line in __.ddev/docker-compose.react_next.yaml__ file.
-To avoid re-install on each restart you can switch the __command__ after the first
-launch.
-
-Prepare React values :
-
-```shell
-cp contenta_react_next/reactjs/.env.default contenta_react_next/reactjs/.env
-```
-
-Edit __reactjs/.env__ and set BACKEND_URL
-
-```shell
-BACKEND_URL=http://contentajs.ddev.local
-```
-
-```shell
-ddev restart
+ddev start
 ```
 
 ## Usage
@@ -264,15 +237,11 @@ ContentaCMS Backoffice
 
 ContentaJS
 
-- [http://contentajs.ddev.local/api](http://contentajs.ddev.local/api)
+- [http://contenta.ddev.local:3000/api](http://contentajs.ddev.local:3000/api)
 
 If installed, access the vue frontend
 
 - [http://front-vue.ddev.local](http://front-vue.ddev.local)
-
-If installed, access the react frontend
-
-- [http://front-react.ddev.local](http://front-vue.ddev.local)
 
 Docker web UI, you can access it on port 9000
 
@@ -298,8 +267,8 @@ ContentaCMS (jsonapi):
 
 ContentaJS:
 
-- api path uri are _contenta.ddev.local_ instead of _contentajs.ddev.local_
+- Redis is not used with got (jsonrpc). Proxy is not using Redis.
 
-React + Next consumer:
+Vue + Nuxt consumer:
 
-- Images are loaded from _front-react.ddev.local_ instead of _contenta.ddev.local_
+- Menu loading not working.
