@@ -5,20 +5,21 @@ services:
     container_name: ddev-${DDEV_SITENAME}-pm2
     image: keymetrics/pm2:8-alpine
     ports:
-      - 80
+      - 3000
     links:
       - web:contenta.ddev.local
     volumes:
-      - ../contentajs:/app
-    working_dir: /app
+      - ../contentajs:/home/node/app
+    working_dir: /home/node/app
+    user: "node"
     # Install from the service and start.
-    command: sh -c 'npm install --no-audit && npm install @contentacms/redis --no-audit && npm start'
-    # Install localy or already installed, just start.
+    command: sh -c 'npm install --no-audit && npm install https://github.com/contentacms/contentajsRedis/archive/master.tar.gz --no-audit && npm start'
+    # Install locally or already installed, just start.
     #command: npm start
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
       com.ddev.app-url: $DDEV_URL
     environment:
-      - VIRTUAL_HOST=contentajs.ddev.local
-      - HTTP_EXPOSE=80:80
+      - VIRTUAL_HOST=contenta.ddev.local
+      - HTTP_EXPOSE=3000:3000
