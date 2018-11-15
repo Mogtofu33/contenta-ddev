@@ -98,15 +98,27 @@ if ! [ -d "./.ddev" ]; then
   exit 1
 fi
 
-printf "[info] Start ddev\\n"
+printf "[info] Prepare ddev\\n"
 cp ddev-files/*.yaml .ddev
 cp ddev-files/docker-compose.vue_nuxt.yaml.dis .ddev/docker-compose.vue_nuxt.yaml
+
+# Detect if we have a local composer to speed up a bit.
+if [ -x "$(command -v composer)" ]; then
+  __cache=$(composer global config cache-dir)
+  if [ ${__cache} ]; then
+    sed -i 's/#volumes/volumes/g' .ddev/docker-compose.override.yaml
+    sed -i 's/#-/-/g' .ddev/docker-compose.override.yaml
+    sed -i "s#YOUR_COMPOSER_CACHE_DIR#$__cache#g" .ddev/docker-compose.override.yaml
+  fi
+fi
+
 ddev start
 
 if ! [ -d "contentacms/web/core" ] ; then
   printf "[info] Download ContentaCMS with Composer from ddev\\n"
+  ddev exec composer global require hirak/prestissimo --profile
   ddev exec composer create-project contentacms/contenta-jsonapi-project /tmp/contentacms \
-    --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist -v
+    --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist --profile
   ddev exec cp -r /tmp/contentacms/ /var/www/html/
   ddev exec rm -rf /tmp/contentacms/
 else
@@ -119,18 +131,16 @@ if ! [ -f "contentacms/web/sites/default/files/sync/core.extension.yml" ] ; then
   cp -r contentacms/web/profiles/contrib/contenta_jsonapi/config/sync/ contentacms/web/sites/default/files/
 fi
 
-# @TODO: remove when PR#333 accepted.
-if [ -f "contentacms/web/modules/contrib/jsonapi/src/Normalizer/EntityNormalizer.php" ]; then
-  # Hotfix PR https://github.com/contentacms/contenta_jsonapi/pull/333
-  curl -fsSL https://gist.githubusercontent.com/Mogtofu33/5742674ea3235c954d36c2aa7b8eb4ad/raw/a183fd49cfc8fccbed9cea33aa53f31c309ad333/EntityNormalizer.php \
-  -o contentacms/web/modules/contrib/jsonapi/src/Normalizer/EntityNormalizer.php
-fi
-
 if ! [ -d "contentacms/keys" ] ; then
   printf "[info] Install ContentaCMS\\n"
   # Ensure settings and permissions.
   ddev config --projecttype drupal8 --projectname contenta --docroot contentacms/web \
     --additional-hostnames front-vue
+
+  # @TODO: https://www.drupal.org/project/jsonapi_extras/issues/3013544
+  # Downgrading to jsonapi_extras 2.10
+  ddev exec composer require --prefer-dist --working-dir=/var/www/html/contentacms drupal/jsonapi_extras:2.10
+
   # Install with drush, db info are in settings.ddev.php created by config line above.
   ddev exec drush si contenta_jsonapi --account-pass=admin --verbose
 else
@@ -145,11 +155,12 @@ else
   printf "[warning] Missing ContentaCMS services.yml file\\n"
 fi
 
-# Ensure PM2 is fully install before restart, npm install can be long.
+# Ensure PM2 is fully installed before restart, npm install can be long.
 while [ ! -f 'contentajs/pm2.pid' ]
 do
   printf "[info] Waiting for ContentaJS to be installed...\\n"
   sleep 10s
+  printf "...If this get stuck, stop and re-run install.sh\\n"
 done
 
 # Avoid install on restart for npm.

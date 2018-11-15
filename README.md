@@ -15,6 +15,7 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
   - [Restart for ContentaJS to connect to ContentaCMS](#restart-for-contentajs-to-connect-to-contentacms)
   - [(Optionnal) Vue + Nuxt frontend](#optionnal-vue--nuxt-frontend)
 - [Usage](#usage)
+- [Daily Usage](#daily-usage)
 - [Issues](#issues)
 
 ## System Requirements
@@ -129,6 +130,8 @@ __command__ line in __.ddev/docker-compose.pm2.yaml__ file.
 To avoid re-install on each restart you can switch the __command__ after the first
 launch.
 
+If you have composer locally you can share the cache folder by editing __.ddev/docker-compose.overrride.yaml__ file and set your cache.
+
 ```shell
 ddev start
 ```
@@ -151,21 +154,23 @@ mkdir -p contentacms/web/sites/default/files/tmp && mkdir -p contentacms/web/sit
 cp -r contentacms/web/profiles/contrib/contenta_jsonapi/config/sync/ contentacms/web/sites/default/files/
 ```
 
-Until [PR 333](https://github.com/contentacms/contenta_jsonapi/pull/333) is resolved, apply this [patch](https://www.drupal.org/project/jsonapi/issues/3011836)
-
-For convenience here is a patched file to replace
-
-```shell
-curl -fSL https://gist.githubusercontent.com/Mogtofu33/5742674ea3235c954d36c2aa7b8eb4ad/raw/a183fd49cfc8fccbed9cea33aa53f31c309ad333/EntityNormalizer.php \
-  -o contentacms/web/modules/contrib/jsonapi/src/Normalizer/EntityNormalizer.php
-```
-
 ### Install ContentaCMS
 
 ```shell
 # Ensure settings and permissions by running ddev config again.
 ddev config --projecttype drupal8 --projectname contenta --docroot contentacms/web \
   --additional-hostnames front-vue,front-react
+```
+
+Until this [issue](https://www.drupal.org/project/jsonapi_extras/issues/3013544) is resolved, fallback to jsonapi_extras:2.10__
+
+```shell
+ddev exec composer require --prefer-dist  --working-dir=/var/www/html/contentacms drupal/jsonapi_extras:2.10
+```
+
+Install ContentaCMS
+
+```shell
 ddev exec drush si contenta_jsonapi --account-pass=admin --verbose
 ```
 
@@ -259,11 +264,32 @@ Mailhog on port 8025
 
 - [http://contenta.ddev.local:8025](http://contenta.ddev.local:8025)
 
+## Daily Usage
+
+Drush with ContentaCMS
+
+```shell
+ddev exec drush status
+ddev exec drush cr
+```
+
+Re-build ContentaJS (see __contentajs/package.json__ for more commands)
+
+```shell
+ddev exec -s pm2 npm run prepare
+```
+
+Use Composer with ContentaCMS
+
+```shell
+ddev exec composer --working-dir=/var/www/html/contentacms show -i contentacms/contenta_jsonapi
+```
+
+View logs, ssh in a container...
+
+- [http://contenta.ddev.local:9000](http://contenta.ddev.local:9000)
+
 ## Issues
-
-ContentaCMS (jsonapi):
-
-- Error getIncludes(), patch from: [https://www.drupal.org/project/jsonapi/issues/3011836](https://www.drupal.org/project/jsonapi/issues/3011836)
 
 ContentaJS:
 
