@@ -6,3 +6,7 @@
 /contenta_react_next
 /contenta_vue_nuxt
 contenta*.tar.gz
+
+/.idea
+/.vscode
+.DS_Store
