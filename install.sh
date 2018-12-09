@@ -145,11 +145,6 @@ if ! [ -d "contentacms/keys" ] ; then
   ddev config --project-type drupal8 --project-name contenta --docroot contentacms/web \
     --additional-hostnames front-vue
 
-  # @TODO: https://www.drupal.org/project/jsonapi_extras/issues/3013544
-  # Downgrading to jsonapi_extras 2.10
-  printf "\\n[HOTFIX] Downgrading to jsonapi_extras 2.10\\n"
-  ddev exec composer require --prefer-dist --working-dir=/var/www/html/contentacms drupal/jsonapi_extras:2.10
-
   # Install with drush, db info are in settings.ddev.php created by config line above.
   ddev exec drush si contenta_jsonapi --account-pass=admin --verbose
 else
