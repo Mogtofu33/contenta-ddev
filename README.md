@@ -1,6 +1,6 @@
 # ContentaCMS - ContentaJs with Docker managed by ddev
 
-[![Build Status](https://travis-ci.com/Mogtofu33/contenta-ddev.svg?branch=master)](https://travis-ci.org/Mogtofu33/contenta-ddev)
+[![Build Status](https://travis-ci.org/Mogtofu33/contenta-ddev.svg?branch=master)](https://travis-ci.org/Mogtofu33/contenta-ddev)
 
 This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [ContentaJS](https://github.com/contentacms/contentajs#readme) environment stack with [ddev](https://github.com/drud/ddev).
 
@@ -8,7 +8,7 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
 - [Features](#features)
 - [Quick installation](#quick-installation)
 - [Manual installation](#manual-installation)
-  - [ddev Installation (Linux example)](#ddev-installation-linux-example)
+  - [ddev Installation / Update (Linux example)](#ddev-installation--update-linux-example)
   - [Grab this project as a starting point](#grab-this-project-as-a-starting-point)
   - [Download ContentaJs](#download-contentajs)
   - [Init ddev project](#init-ddev-project)
@@ -22,9 +22,9 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
 
 ## System Requirements
 
-- [Docker 18.06+](https://store.docker.com/search?type=edition&offering=community)
-- [Docker Compose 1.22+](https://docs.docker.com/compose/install/)
-- [ddev v1.3.0+](https://github.com/drud/ddev)
+- [Docker 18.09+](https://store.docker.com/search?type=edition&offering=community)
+- [Docker Compose 1.23+](https://docs.docker.com/compose/install/)
+- [ddev v1.4+](https://github.com/drud/ddev)
 
 Tested on Ubuntu, see [ddev](https://ddev.readthedocs.io/en/latest/#system-requirements) for more details.
 
@@ -39,7 +39,7 @@ Include default ddev stack for Drupal (Nginx, Php 7.1 fpm, Mariadb, PhpMyAdmin, 
 ## Quick installation
 
 If you are on Ubuntu 16+/Debian, you can try to use the __install.sh__ script included
-to perform an installation of ContentaCMS, ContentaJS and Contenta_vue_nuxt.
+to perform an installation of ContentaCMS, ContentaJS and Contenta Vue Nuxt.
 
 ```shell
 curl -fSL https://github.com/Mogtofu33/contenta-ddev/archive/master.tar.gz -o contenta-ddev.tar.gz
@@ -55,7 +55,7 @@ If it fail you can follow manual steps below.
 
 ## Manual installation
 
-### ddev Installation (Linux example)
+### ddev Installation / Update (Linux example)
 
 - [https://ddev.readthedocs.io/en/latest/#installation](https://ddev.readthedocs.io/en/latest/#installation)
 
