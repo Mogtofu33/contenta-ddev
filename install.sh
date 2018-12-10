@@ -15,17 +15,17 @@ if [ "${1:-}" == "nuke" ]; then
   __who=${2:-"all"}
   if [ "$__who" == "all" ]; then
     ddev remove
-    printf "\\n${blu}[Info] Remove code...${end}\\n"
+    printf "\\n%s[Info] Remove code...%s\\n" "$blu" "$end"
     rm -rf .ddev contenta_vue_nuxt contentacms contentajs
     docker stop ddev-ssh-agent
     docker rm ddev-ssh-agent
   else
     if [ -d "$__who" ] ; then
       ddev remove
-      printf "\\n${blu}[Info] Remove code %s...${end}\\n" "$__who"
+      printf "\\n%s[Info] Remove code %s...%s\\n" "$blu" "$__who" "$end"
       rm -rf .ddev "$__who"
     else
-      printf "\\n${red}[Error] Unknown folder %s${end}\\n" "$__who"
+      printf "\\n%s[Error] Unknown folder %s%s\\n" "$red" "$__who" "$end"
       exit 1
     fi
   fi
@@ -33,25 +33,25 @@ if [ "${1:-}" == "nuke" ]; then
 fi
 
 if ! [ -x "$(command -v docker)" ]; then
-  printf "${red}[Error] Docker is not installed${end}\\n" >&2
+  printf "%s[Error] Docker is not installed%s\\n" "$red" "$end"
   exit 1
 fi
 
 if ! [ -x "$(command -v docker-compose)" ]; then
-  printf "${red}[Error] Docker-compose is not installed${end}\\n" >&2
+  printf "%s[Error] Docker-compose is not installed%s\\n" "$red" "$end"
   exit 1
 fi
 
 if ! [ -x "$(command -v ddev)" ]; then
-  printf "${blu}[info] Install ddev${end}\\n"
+  printf "%s[info] Install ddev%s\\n" "$blu" "$end"
   sudo curl -L https://raw.githubusercontent.com/drud/ddev/master/install_ddev.sh | bash
 else
-  printf "${yel}[info] ddev already installed, please ensure to update to latest version${end}\\n"
+  printf "%s[info] ddev already installed, please ensure to update to latest version%s\\n" "$yel" "$end"
 fi
 
 # Install ContentaJS.
 if ! [ -f "contentajs/package.json" ] ; then
-  printf "\\n${blu}[info] Install ContentaJS${end}\\n"
+  printf "\\n%s[info] Install ContentaJS%s\\n" "$blu" "$end"
   curl -fsSL https://github.com/contentacms/contentajs/archive/master.tar.gz -o contentajs.tar.gz
   tar -xzf contentajs.tar.gz && mv contentajs-master contentajs
   rm -f contentajs.tar.gz
@@ -62,9 +62,9 @@ if ! [ -f "contentajs/package.json" ] ; then
   sed -i '/watch: true,/a\      ignore_watch: ["node_modules", "client/img", "logs", "pids", "touch", "pm2.pid", "rpc.sock", "pub.sock"],' contentajs/ecosystem.config.js
   # Fix warning: http://pm2.keymetrics.io/docs/usage/environment/#specific-environment-variables
   sed -i '/port: 3000,/a\      instance_var: "INSTANCE_ID",' contentajs/ecosystem.config.js
-  printf "\\n ... ${grn}done${end}\\n"
+  printf "\\n ... %sdone%s\\n" "$grn" "$end"
 else
-  printf "\\n${yel}[info] ContentaJS already installed, remove folder contentajs to re-install.${end}\\n"
+  printf "\\n%s[info] ContentaJS already installed, remove folder contentajs to re-install.%s\\n" "$yel" "$end"
 fi
 
 if ! [ -f "contentajs/config/local.yml" ] ; then
@@ -86,14 +86,14 @@ EOL
 fi
 
 if ! [ -f "contenta_vue_nuxt/package.json" ] ; then
-  printf "\\n${blu}[info] Install Contenta Vue consumer${end}\\n"
+  printf "\\n%s[info] Install Contenta Vue consumer%s\\n" "$blu" "$end"
   curl -fsSL https://github.com/contentacms/contenta_vue_nuxt/archive/master.tar.gz -o contenta_vue_nuxt.tar.gz
   tar -xzf contenta_vue_nuxt.tar.gz && mv contenta_vue_nuxt-master contenta_vue_nuxt
   rm -f contenta_vue_nuxt.tar.gz
 
   sed -i 's#"dev": "nuxt"#"dev": "HOST=0.0.0.0 node_modules/.bin/nuxt"#g' contenta_vue_nuxt/package.json
 else
-  printf "\\n${yel}[info] Contenta Vue Nuxt already installed, remove folder contenta_vue_nuxt to re-install.${end}\\n"
+  printf "\\n%s[info] Contenta Vue Nuxt already installed, remove folder contenta_vue_nuxt to re-install.%s\\n" "$yel" "$end"
 fi
 
 if [ -f "contenta_vue_nuxt/nuxt.config.js" ] ; then
@@ -101,7 +101,7 @@ if [ -f "contenta_vue_nuxt/nuxt.config.js" ] ; then
   sed -i "s#serverFilesUrl = 'https://back-end.contentacms.io'#serverFilesUrl = 'http://contenta.ddev.local'#g" contenta_vue_nuxt/nuxt.config.js
 fi
 
-printf "\\n${blu}[info] Init ddev project${end}\\n"
+printf "\\n%s[info] Init ddev project%s\\n" "$blu" "$end"
 if ! [ -d "./contentacms/web/sites/default" ]; then
   mkdir -p ./contentacms/web/sites/default
 fi
@@ -110,11 +110,11 @@ ddev config --project-type drupal8 --project-name contenta --docroot contentacms
   --additional-hostnames front-vue
 
 if ! [ -d "./.ddev" ]; then
-  printf "\\n${red}[Error] ddev not initiated${end}\\n" >&2
+  printf "\\n%s[Error] ddev not initiated%s\\n" "$red" "$end"
   exit 1
 fi
 
-printf "\\n${blu}[info] Prepare ddev${end}\\n"
+printf "\\n%s[info] Prepare ddev%s\\n" "$blu" "$end"
 cp ddev-files/*.yaml .ddev
 cp ddev-files/docker-compose.vue_nuxt.yaml.dis .ddev/docker-compose.vue_nuxt.yaml
 
@@ -138,7 +138,7 @@ fi
 ddev start
 
 if ! [ -d "contentacms/web/core" ] ; then
-  printf "\\n${blu}[info] Download ContentaCMS with Composer from ddev${end}\\n"
+  printf "\\n%s[info] Download ContentaCMS with Composer from ddev%s\\n" "$blu" "$end"
   # Boost composer.
   ddev exec composer global require hirak/prestissimo --profile
   ddev exec composer create-project contentacms/contenta-jsonapi-project /tmp/contentacms \
@@ -146,17 +146,17 @@ if ! [ -d "contentacms/web/core" ] ; then
   ddev exec cp -r /tmp/contentacms/ /var/www/html/
   ddev exec rm -rf /tmp/contentacms/
 else
-  printf "\\n${yel}[info] ContentaCMS already downloaded, remove folder contentacms to re-install.${end}\\n"
+  printf "\\n%s[info] ContentaCMS already downloaded, remove folder contentacms to re-install.%s\\n" "$yel" "$end"
 fi
 
 if ! [ -f "contentacms/web/sites/default/files/sync/core.extension.yml" ] ; then
-  printf "\\n${blu}[info] Prepare ContentaCMS${end}\\n"
+  printf "\\n%s[info] Prepare ContentaCMS%s\\n" "$blu" "$end"
   mkdir -p contentacms/web/sites/default/files/tmp && mkdir -p contentacms/web/sites/default/files/sync
   cp -r contentacms/web/profiles/contrib/contenta_jsonapi/config/sync/ contentacms/web/sites/default/files/
 fi
 
 if ! [ -d "contentacms/keys" ] ; then
-  printf "\\n${blu}[info] Install ContentaCMS${end}\\n"
+  printf "\\n%s[info] Install ContentaCMS%s\\n" "$blu" "$end"
   # Ensure settings and permissions.
   ddev config --project-type drupal8 --project-name contenta --docroot contentacms/web \
     --additional-hostnames front-vue
@@ -164,7 +164,7 @@ if ! [ -d "contentacms/keys" ] ; then
   # Install with drush, db info are in settings.ddev.php created by config line above.
   ddev exec drush si contenta_jsonapi --account-pass=admin --verbose
 else
-  printf "\\n${yel}[info] ContentaCMS already installed, remove folder contentacms to re-install.${end}\\n"
+  printf "\\n%s[info] ContentaCMS already installed, remove folder contentacms to re-install.%s\\n" "$yel" "$end"
 fi
 
 if [ -f "contentacms/web/sites/default/services.yml" ] ; then
@@ -172,15 +172,15 @@ if [ -f "contentacms/web/sites/default/services.yml" ] ; then
   sed -i "s/- localhost/- '*'/g"  contentacms/web/sites/default/services.yml
   sed -i "s/localhost:/local:/g"  contentacms/web/sites/default/services.yml
 else
-  printf "\\n${red}[warning] Missing ContentaCMS services.yml file${end}\\n"
+  printf "\\n%s[warning] Missing ContentaCMS services.yml file%s\\n" "$red" "$end"
 fi
 
 # Ensure PM2 is fully installed before restart, npm install can be long.
 while [ ! -f 'contentajs/pm2.pid' ]
 do
-  printf "\\n${yel}[info] Waiting for ContentaJS to be installed...${end}\\n"
+  printf "\\n%s[info] Waiting for ContentaJS to be installed...%s\\n" "$yel" "$end"
   sleep 5s
-  printf "\\n   ... ${yel}If this get stuck, break and re-run install.sh${end}\\n"
+  printf "\\n   ... %sIf this get stuck, break and re-run install.sh%s\\n" "$yel" "$end"
 done
 
 # Avoid install on restart for npm.
@@ -189,7 +189,7 @@ sed -i 's/#command: npm/command: npm/g' .ddev/docker-compose.pm2.yaml
 sed -i 's/command: sh -c/#command: sh -c/g' .ddev/docker-compose.vue_nuxt.yaml
 sed -i 's/#command: npm/command: npm/g' .ddev/docker-compose.vue_nuxt.yaml
 
-printf "\\n${blu}[info] Restart ddev${end}\\n"
+printf "\\n%s[info] Restart ddev%s\\n" "$blu" "$end"
 ddev restart
 
-printf "\\n${grn}   ... done${end}\\n"
+printf "\\n%s   ... done%s\\n" "$grn" "$end"
