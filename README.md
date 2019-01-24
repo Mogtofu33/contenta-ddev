@@ -164,12 +164,6 @@ ddev config --projecttype drupal8 --projectname contenta --docroot contentacms/w
   --additional-hostnames front-vue,front-react
 ```
 
-Until this [issue](https://www.drupal.org/project/jsonapi_extras/issues/3013544) is resolved, fallback to jsonapi_extras:2.10__
-
-```shell
-ddev exec composer require --prefer-dist  --working-dir=/var/www/html/contentacms drupal/jsonapi_extras:2.10
-```
-
 Install ContentaCMS
 
 ```shell

@@ -46,7 +46,16 @@ if ! [ -x "$(command -v ddev)" ]; then
   printf "%s[info] Install ddev%s\\n" "$blu" "$end"
   sudo curl -L https://raw.githubusercontent.com/drud/ddev/master/install_ddev.sh | bash
 else
-  printf "%s[info] ddev already installed, please ensure to update to latest version%s\\n" "$yel" "$end"
+  printf "%s[info] ddev already installed, checking version%s\\n" "$yel" "$end"
+  __last_version=$(curl --silent "https://api.github.com/repos/drud/ddev/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
+  __last_version="v1.5.3"
+  __local_verion=$(ddev version | grep cli | awk '{print $2}')
+  if [ "${__local_verion}" == "${__last_version}" ]; then
+    printf "%s[success] you have the last version: %s%s\\n" "$grn" "$__last_version" "$end"
+  else
+    printf "%s[Error] last version: %s, Your version: %s%s\\nSee documentation: https://ddev.readthedocs.io/en/stable/#installation\\n" "$red" "$__last_version" "$__local_verion" "$end"
+    exit 1
+  fi
 fi
 
 # Install ContentaJS.
@@ -192,4 +201,11 @@ sed -i 's/#command: npm/command: npm/g' .ddev/docker-compose.vue_nuxt.yaml
 printf "\\n%s[info] Restart ddev%s\\n" "$blu" "$end"
 ddev restart
 
-printf "\\n%s   ... done%s\\n" "$grn" "$end"
+printf "\\n%s  Login in Drupal with admin / admin at http://contenta.ddev.local/user%s\\n\\n" "$blu" "$end"
+
+printf "%s    Drupal api       http://contenta.ddev.local/api%s\\n" "$blu" "$end"
+printf "%s    ConentaJS api    http://contenta.ddev.local:3000/api%s\\n" "$blu" "$end"
+printf "%s    Redis commander  http://contenta.ddev.local:8081%s\\n" "$blu" "$end"
+printf "%s    Protainer        http://contenta.ddev.local:9000%s\\n" "$blu" "$end"
+
+printf "\\n%s ... done, see README.md for more info, happy testing! ;)%s\\n" "$grn" "$end"
