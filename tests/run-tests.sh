@@ -63,7 +63,7 @@ printf "\\n${yel}[test] Check Front VUE logs${end}\\n"
 ddev logs -s front_vue --tail 8
 
 printf "\\n${blu}[test] Prepare Front VUE tests${end}\\n"
-# Force restart to ensure fornt_vue check with api.
+# Force restart to ensure front_vue check with api.
 ddev restart
 sleep 10s
 curl --silent --output /dev/null http://contenta.ddev.local/api

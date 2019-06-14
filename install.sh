@@ -44,12 +44,11 @@ fi
 
 if ! [ -x "$(command -v ddev)" ]; then
   printf "%s[info] Install ddev%s\\n" "$blu" "$end"
-  sudo curl -L https://raw.githubusercontent.com/drud/ddev/master/install_ddev.sh | bash
+  sudo curl -L https://raw.githubusercontent.com/drud/ddev/master/scripts/install_ddev.sh | bash
 else
   printf "%s[info] ddev already installed, checking version%s\\n" "$yel" "$end"
   __last_version=$(curl --silent "https://api.github.com/repos/drud/ddev/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
-  __last_version="v1.5.3"
-  __local_verion=$(ddev version | grep cli | awk '{print $2}')
+  __local_verion=$(ddev version | grep version | awk '{print $3}')
   if [ "${__local_verion}" == "${__last_version}" ]; then
     printf "%s[success] you have the last version: %s%s\\n" "$grn" "$__last_version" "$end"
   else

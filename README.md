@@ -60,7 +60,7 @@ If it fail you can follow manual steps below.
 - [https://ddev.readthedocs.io/en/latest/#installation](https://ddev.readthedocs.io/en/latest/#installation)
 
 ```shell
-curl -L https://raw.githubusercontent.com/drud/ddev/master/install_ddev.sh | bash
+curl -L https://raw.githubusercontent.com/drud/ddev/master/scripts/install_ddev.sh | bash
 ```
 
 ### Grab this project as a starting point
