@@ -154,7 +154,7 @@ if ! [ -d "contentacms/web/core" ] ; then
   # Boost composer.
   ddev exec composer global require hirak/prestissimo --profile
   ddev exec composer create-project contentacms/contenta-jsonapi-project /tmp/contentacms \
-    --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist --profile
+    --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist --profile --no-suggest
   ddev exec cp -r /tmp/contentacms/ /var/www/html/
   ddev exec rm -rf /tmp/contentacms/
 else
@@ -169,12 +169,12 @@ fi
 
 if ! [ -d "contentacms/keys" ] ; then
   printf "\\n%s[info] Install ContentaCMS%s\\n" "$blu" "$end"
-  # Ensure settings and permissions.
+  # Create Ddev project.
   ddev config --project-type drupal8 --project-name contenta --docroot contentacms/web \
     --additional-hostnames front-vue
 
   # Install with drush, db info are in settings.ddev.php created by config line above.
-  ddev exec drush si contenta_jsonapi --account-pass=admin --verbose
+  ddev exec drush si -y contenta_jsonapi --account-pass=admin --verbose
 else
   printf "\\n%s[info] ContentaCMS already installed, remove folder contentacms to re-install.%s\\n" "$yel" "$end"
 fi
