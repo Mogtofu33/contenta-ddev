@@ -7,23 +7,21 @@ services:
   - docker
 
 stages:
-  - lint
+  # - lint
   - test
-
-before_install:
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
 jobs:
   include:
-    - stage: lint
-      script: shellcheck install.sh
+    # - stage: lint
+    #   script: shellcheck install.sh
 
     - stage: test
-      # No need to test portainer.
       before_install:
+      # Update Docker for Ddev.
+        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+        - sudo apt-get update
+        - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
         - mv ddev-files/docker-compose.portainer.yaml ddev-files/docker-compose.portainer.yaml.dis
       install:
         - ./install.sh ci
