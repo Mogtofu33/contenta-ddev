@@ -8,7 +8,7 @@ blu=$'\e[1;34m'
 end=$'\e[0m'
 
 printf "${blu}[test] Test ContentaCMS${end}\\n"
-status=$(ddev exec drush status --field=bootstrap)
+status=$(ddev exec drush st --field=bootstrap)
 
 if [ $status == 'Successful' ]; then
   printf "   ... ${grn}OK :: %s${end}\\n" "$status"
