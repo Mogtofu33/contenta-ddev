@@ -143,7 +143,11 @@ if [ "${1:-}" == "ci" ]; then
 fi
 
 # First start of the stack.
-ddev start
+if [ "${1:-}" == "ci" ]; then
+  n | ddev start
+else
+  ddev start
+fi
 
 if ! [ -d "contentacms/web/core" ] ; then
   printf "\\n%s[info] Download ContentaCMS with Composer from ddev%s\\n" "$blu" "$end"
