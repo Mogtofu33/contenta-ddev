@@ -3,7 +3,7 @@ version: '3.6'
 services:
   pm2:
     container_name: ddev-${DDEV_SITENAME}-pm2
-    image: keymetrics/pm2:8-alpine
+    image: keymetrics/pm2:latest-alpine
     ports:
       - 3000
     links:
@@ -19,7 +19,6 @@ services:
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
-      com.ddev.app-url: $DDEV_URL
     environment:
       - VIRTUAL_HOST=contenta.ddev.local
       - HTTP_EXPOSE=3000:3000

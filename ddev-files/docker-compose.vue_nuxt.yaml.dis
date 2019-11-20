@@ -19,7 +19,6 @@ services:
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
-      com.ddev.app-url: $DDEV_URL
     environment:
       - VIRTUAL_HOST=front-vue.ddev.local
       - HTTP_EXPOSE=80:3000
