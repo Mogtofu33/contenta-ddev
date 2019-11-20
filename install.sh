@@ -154,7 +154,7 @@ if ! [ -d "contentacms/web/core" ] ; then
   # Boost composer.
   ddev exec composer global require hirak/prestissimo --profile
   ddev exec composer create-project contentacms/contenta-jsonapi-project /tmp/contentacms \
-    --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist --profile --no-suggest
+    --stability dev --no-interaction --remove-vcs --no-progress --prefer-dist --profile
   ddev exec cp -r /tmp/contentacms/ /var/www/html/
   ddev exec rm -rf /tmp/contentacms/
 else

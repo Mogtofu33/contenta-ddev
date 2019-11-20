@@ -1,6 +1,6 @@
 # ContentaCMS - ContentaJs with Docker managed by ddev
 
-[![Build Status](https://travis-ci.org/Mogtofu33/contenta-ddev.svg?branch=master)](https://travis-ci.org/Mogtofu33/contenta-ddev)
+[![Build Status](https://travis-ci.org/mogtofu33/contenta-ddev.svg?branch=master)](https://travis-ci.org/mogtofu33/contenta-ddev)
 
 This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [ContentaJS](https://github.com/contentacms/contentajs#readme) environment stack with [ddev](https://github.com/drud/ddev).
 
@@ -42,7 +42,7 @@ If you are on Ubuntu 16+/Debian, you can try to use the __install.sh__ script in
 to perform an installation of ContentaCMS, ContentaJS and Contenta Vue Nuxt.
 
 ```shell
-curl -fSL https://github.com/Mogtofu33/contenta-ddev/archive/master.tar.gz -o contenta-ddev.tar.gz
+curl -fSL https://github.com/mogtofu33/contenta-ddev/archive/master.tar.gz -o contenta-ddev.tar.gz
 tar -xzf contenta-ddev.tar.gz && mv contenta-ddev-master contenta-ddev
 cd contenta-ddev
 chmod a+x install.sh
@@ -66,7 +66,7 @@ curl -L https://raw.githubusercontent.com/drud/ddev/master/scripts/install_ddev.
 ### Grab this project as a starting point
 
 ```shell
-curl -fSL https://github.com/Mogtofu33/contenta-ddev/archive/master.tar.gz -o contenta-ddev.tar.gz
+curl -fSL https://github.com/mogtofu33/contenta-ddev/archive/master.tar.gz -o contenta-ddev.tar.gz
 tar -xzf contenta-ddev.tar.gz && mv contenta-ddev-master contenta-ddev
 cd contenta-ddev
 ```
