@@ -7,8 +7,11 @@ yel=$'\e[1;33m'
 blu=$'\e[1;34m'
 end=$'\e[0m'
 
+_error=0
+
 printf "${blu}[test] Test ContentaCMS${end}\\n"
 status=$(ddev exec drush st --field=bootstrap)
+status=${status//[[:space:]]/}
 
 if [ $status == 'Successful' ]; then
   printf "   ... ${grn}OK :: %s${end}\\n" "$status"
@@ -18,75 +21,80 @@ else
   printf "   ... ${red}Failed${end}\\n"
   # Print all status for debug.
   ddev exec drush status
-  exit 1
+  _error=1
 fi
 
 printf "${blu}[test] Test ContentaCMS API${end}\\n"
-test=$(curl --write-out %{http_code} --silent --output /dev/null http://contenta.ddev.local/api)
+test=$(curl --write-out %{http_code} --silent --output /dev/null http://contenta.ddev.site/api)
 
 if [ $test == '200' ]; then
   printf "   ... ${grn}OK :: %s${end}\\n" "$test"
-  # curl -H "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.local" -I http://contenta.ddev.local/api
+  # curl -H "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.site" -I http://contenta.ddev.site/api
   if [ -x "$(command -v jq)" ]; then
     printf "\\n${blu}[test] Test ContentaCMS API with CORS${end}\\n"
-    curl -sH "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.local" http://contenta.ddev.local/api | jq '.links.self'
-    curl -sH "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.local" http://contenta.ddev.local/api/pages | jq '.jsonapi.version'
+    curl -sH "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.site" http://contenta.ddev.site/api | jq '.links.self'
+    curl -sH "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.site" http://contenta.ddev.site/api/pages | jq '.jsonapi.version'
   fi
 else
   printf "   ... ${red}Failed :: %s${end}\\n" "$test"
   # Print all status for debug.
-  curl -I http://contenta.ddev.local/api
-  exit 1
+  curl -I http://contenta.ddev.site/api
+  _error=1
 fi
 
 printf "\\n${yel}[test] Check ContentaJS logs${end}\\n"
 ddev logs -s pm2 --tail 10
 
 printf "\\n${blu}[test] Test ContentaJS${end}\\n"
-test=$(curl --write-out %{http_code} --silent --output /dev/null http://contenta.ddev.local:3000/api)
+test=$(curl --write-out %{http_code} --silent --output /dev/null http://contentajs.ddev.site/api)
 if [ $test == '200' ]; then
   printf "   ... ${grn}OK :: %s${end}\\n" "$test"
-  # curl -H "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.local" -I http://contenta.ddev.local:3000/api
+  # curl -H "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.site" -I http://contentajs.ddev.site/api
   if [ -x "$(command -v jq)" ]; then
     printf "\\n${blu}[test] Test ContentaJS API with CORS${end}\\n"
-    curl -sH "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.local" http://contenta.ddev.local:3000/api | jq '.links.self'
-    curl -sH "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.local" http://contenta.ddev.local:3000/api/pages | jq '.jsonapi.version'
+    curl -sH "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.site" http://contentajs.ddev.site/api | jq '.links.self'
+    curl -sH "Access-Control-Request-Method: GET" -H "Origin: http://contenta.ddev.site" http://contentajs.ddev.site/api/pages | jq '.jsonapi.version'
   fi
 else
   printf "   ... ${red}Failed :: %s${end}\\n" "$test"
   # Print all status for debug.
-  curl -I http://contenta.ddev.local:3000/api
-  exit 1
+  curl -I http://contentajs.ddev.site/api
+  _error=1
 fi
 
-printf "\\n${yel}[test] Check Front VUE logs${end}\\n"
-ddev logs -s front_vue --tail 8
+printf "\\n${yel}[test] Check Front React logs${end}\\n"
+ddev logs -s front_react --tail 8
 
-printf "\\n${blu}[test] Prepare Front VUE tests${end}\\n"
-# Force restart to ensure front_vue check with api.
-ddev restart
-sleep 10s
-curl --silent --output /dev/null http://contenta.ddev.local/api
-curl --silent --output /dev/null http://contenta.ddev.local:3000/api
+# printf "\\n${blu}[test] Prepare Front React tests${end}\\n"
+# Force restart to ensure front_react check with api.
+# ddev restart
+# sleep 10s
+curl --silent --output /dev/null http://contenta.ddev.site/api
+curl --silent --output /dev/null http://contentajs.ddev.site/api
 
-printf "\\n${blu}[test] Test Front VUE access${end}\\n"
-test=$(curl --write-out %{http_code} --silent --output /dev/null http://front-vue.ddev.local)
+printf "\\n${blu}[test] Test Front React access${end}\\n"
+test=$(curl --write-out %{http_code} --silent --output /dev/null http://front-react.ddev.site)
 if [ $test == '200' ]; then
   printf "   ... ${grn}OK :: %s${end}\\n" "$test"
 else
   printf "   ... ${red}Failed :: %s${end}\\n" "$test"
   # Print all status for debug.
-  curl -I http://front-vue.ddev.local
-  exit 1
+  curl -I http://front-react.ddev.site
+  _error=1
 fi
 
 printf "\\n${blu}[test] Test Redis access${end}\\n"
-test=$(curl --write-out %{http_code} --silent --output /dev/null http://contenta.ddev.local:8081)
+test=$(curl --write-out %{http_code} --silent --output /dev/null http://contenta.ddev.site:8081)
 if [ $test == '200' ]; then
   printf "   ... ${grn}OK :: %s${end}\\n" "$test"
 else
   printf "   ... ${red}Failed :: %s${end}\\n" "$test"
   # Print all status for debug.
-  curl -I http://contenta.ddev.local:8081
+  curl -I http://contenta.ddev.site:8081
+  _error=1
+fi
+
+if [ $_error == '1' ]; then
+  printf "\\n${red}[ERROR]${end} Some tests failed\\n"
   exit 1
 fi

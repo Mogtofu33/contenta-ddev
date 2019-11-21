@@ -7,18 +7,18 @@ services:
     ports:
       - 3000
     links:
-      - web:contenta.ddev.local
+      - web:contenta.ddev.site
     volumes:
       - ../contentajs:/home/node/app
     working_dir: /home/node/app
     user: "node"
     # Install from the service and start.
-    command: sh -c 'npm install --no-audit && npm install https://github.com/contentacms/contentajsRedis/archive/master.tar.gz --no-audit && npm start'
+    command: sh -c 'npm config set strict-ssl false && npm install --no-audit && npm install https://github.com/contentacms/contentajsRedis/archive/master.tar.gz --no-audit && sleep 10s && npm start'
     # Install locally or already installed, just start.
     #command: npm start
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
     environment:
-      - VIRTUAL_HOST=contenta.ddev.local
-      - HTTP_EXPOSE=3000:3000
+      - VIRTUAL_HOST=contentajs.ddev.site
+      - HTTP_EXPOSE=80:3000

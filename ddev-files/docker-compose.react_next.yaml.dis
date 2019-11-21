@@ -1,24 +1,25 @@
 version: '3.6'
 
 services:
-  front_vue:
-    container_name: ddev-${DDEV_SITENAME}-front_vue
+  front_react:
+    container_name: ddev-${DDEV_SITENAME}-front_react
     image: node:dubnium-alpine
     ports:
       - 3000
     links:
-      - web:contenta.ddev.local
+      - web:contenta.ddev.site
+      - pm2:contentajs.ddev.site
     volumes:
-      - ../contenta_vue_nuxt:/home/node/app
+      - ../contenta_react_next:/home/node/app
     working_dir: /home/node/app
     user: "node"
     # Install from the service and start.
-    command: sh -c 'npm install && npm run dev'
+    command: sh -c 'yarn install && yarn start:dev'
     # Install locally or already installed, just start.
-    #command: npm run dev
+    #command: yarn start:dev
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
     environment:
-      - VIRTUAL_HOST=front-vue.ddev.local
+      - VIRTUAL_HOST=front-react.ddev.site
       - HTTP_EXPOSE=80:3000

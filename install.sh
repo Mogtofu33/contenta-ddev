@@ -16,7 +16,7 @@ if [ "${1:-}" == "nuke" ]; then
   if [ "$__who" == "all" ]; then
     ddev remove
     printf "\\n%s[Info] Remove code...%s\\n" "$blu" "$end"
-    rm -rf .ddev contenta_vue_nuxt contentacms contentajs
+    rm -rf .ddev contenta_react_next contentacms contentajs
     docker stop ddev-ssh-agent
     docker rm ddev-ssh-agent
   else
@@ -78,7 +78,7 @@ fi
 if ! [ -f "contentajs/config/local.yml" ] ; then
   cat >contentajs/config/local.yml <<EOL
 cms:
-  host: http://contenta.ddev.local
+  host: http://contenta.ddev.site
 got:
   applicationCache:
     activePlugin: redis
@@ -93,20 +93,16 @@ cors:
 EOL
 fi
 
-if ! [ -f "contenta_vue_nuxt/package.json" ] ; then
-  printf "\\n%s[info] Install Contenta Vue consumer%s\\n" "$blu" "$end"
-  curl -fsSL https://github.com/contentacms/contenta_vue_nuxt/archive/master.tar.gz -o contenta_vue_nuxt.tar.gz
-  tar -xzf contenta_vue_nuxt.tar.gz && mv contenta_vue_nuxt-master contenta_vue_nuxt
-  rm -f contenta_vue_nuxt.tar.gz
+if ! [ -f "contenta_react_next/package.json" ] ; then
+  printf "\\n%s[info] Install Contenta React Next consumer%s\\n" "$blu" "$end"
+  curl -fsSL https://github.com/contentacms/contenta_react_next/archive/master.tar.gz -o contenta_react_next.tar.gz
+  tar -xzf contenta_react_next.tar.gz && mv contenta_react_next-master/reactjs contenta_react_next
+  rm -rf contenta_react_next-master contenta_react_next.tar.gz
 
-  sed -i 's#"dev": "nuxt"#"dev": "HOST=0.0.0.0 node_modules/.bin/nuxt"#g' contenta_vue_nuxt/package.json
+  cp contenta_react_next/.env.default contenta_react_next/.env
+  sed -i "s#BACKEND_URL=https://live-contentacms.pantheonsite.io#BACKEND_URL=http://contentajs.ddev.site:3000#g" contenta_react_next/.env
 else
-  printf "\\n%s[info] Contenta Vue Nuxt already installed, remove folder contenta_vue_nuxt to re-install.%s\\n" "$yel" "$end"
-fi
-
-if [ -f "contenta_vue_nuxt/nuxt.config.js" ] ; then
-  sed -i "s#serverBaseUrl = 'https://back-end.contentacms.io'#serverBaseUrl = 'http://pm2:3000'#g" contenta_vue_nuxt/nuxt.config.js
-  sed -i "s#serverFilesUrl = 'https://back-end.contentacms.io'#serverFilesUrl = 'http://contenta.ddev.local'#g" contenta_vue_nuxt/nuxt.config.js
+  printf "\\n%s[info] Contenta React Next already installed, remove folder contenta_react_next to re-install.%s\\n" "$yel" "$end"
 fi
 
 printf "\\n%s[info] Init ddev project%s\\n" "$blu" "$end"
@@ -115,7 +111,7 @@ if ! [ -d "./contentacms/web/sites/default" ]; then
 fi
 
 ddev config --project-type drupal8 --project-name contenta --docroot contentacms/web \
-  --additional-hostnames front-vue
+  --additional-hostnames front-react,contentajs
 
 if ! [ -d "./.ddev" ]; then
   printf "\\n%s[Error] ddev not initiated%s\\n" "$red" "$end"
@@ -124,7 +120,7 @@ fi
 
 printf "\\n%s[info] Prepare ddev%s\\n" "$blu" "$end"
 cp ddev-files/*.yaml .ddev
-cp ddev-files/docker-compose.vue_nuxt.yaml.dis .ddev/docker-compose.vue_nuxt.yaml
+cp ddev-files/docker-compose.react_next.yaml.dis .ddev/docker-compose.react_next.yaml
 
 # Detect if we have a local composer to speed up a bit.
 if [ -x "$(command -v composer)" ]; then
@@ -139,7 +135,7 @@ fi
 if [ "${1:-}" == "ci" ]; then
   # Fix npm permission error on ci.
   sudo chmod -R 777 contentajs
-  sudo chmod -R 777 contenta_vue_nuxt
+  sudo chmod -R 777 contenta_react_next
 fi
 
 # First start of the stack.
@@ -171,7 +167,7 @@ if ! [ -d "contentacms/keys" ] ; then
   printf "\\n%s[info] Install ContentaCMS%s\\n" "$blu" "$end"
   # Create Ddev project.
   ddev config --project-type drupal8 --project-name contenta --docroot contentacms/web \
-    --additional-hostnames front-vue
+    --additional-hostnames front-react,contentajs
 
   # Install with drush, db info are in settings.ddev.php created by config line above.
   ddev exec drush si -y contenta_jsonapi --account-pass=admin --verbose
@@ -191,24 +187,25 @@ fi
 while [ ! -f 'contentajs/pm2.pid' ]
 do
   printf "\\n%s[info] Waiting for ContentaJS to be installed...%s\\n" "$yel" "$end"
-  sleep 5s
+  sleep 10s
   printf "\\n   ... %sIf this get stuck, break and re-run install.sh%s\\n" "$yel" "$end"
 done
 
 # Avoid install on restart for npm.
 sed -i 's/command: sh -c/#command: sh -c/g' .ddev/docker-compose.pm2.yaml
 sed -i 's/#command: npm/command: npm/g' .ddev/docker-compose.pm2.yaml
-sed -i 's/command: sh -c/#command: sh -c/g' .ddev/docker-compose.vue_nuxt.yaml
-sed -i 's/#command: npm/command: npm/g' .ddev/docker-compose.vue_nuxt.yaml
+sed -i 's/command: sh -c/#command: sh -c/g' .ddev/docker-compose.react_next.yaml
+sed -i 's/#command: yarn/command: yarn/g' .ddev/docker-compose.react_next.yaml
 
 printf "\\n%s[info] Restart ddev%s\\n" "$blu" "$end"
 ddev restart
 
-printf "\\n%s  Login in Drupal with admin / admin at http://contenta.ddev.local/user%s\\n\\n" "$blu" "$end"
+printf "\\n%s  Login in Drupal with admin / admin at http://contenta.ddev.site/user%s\\n\\n" "$blu" "$end"
 
-printf "%s    Drupal api       http://contenta.ddev.local/api%s\\n" "$blu" "$end"
-printf "%s    ConentaJS api    http://contenta.ddev.local:3000/api%s\\n" "$blu" "$end"
-printf "%s    Redis commander  http://contenta.ddev.local:8081%s\\n" "$blu" "$end"
-printf "%s    Protainer        http://contenta.ddev.local:9000%s\\n" "$blu" "$end"
+printf "%s    React            http://front-react.ddev.site%s\\n" "$blu" "$end"
+printf "%s    Drupal api       http://contenta.ddev.site/api%s\\n" "$blu" "$end"
+printf "%s    ConentaJS api    http://contentajs.ddev.site/api%s\\n" "$blu" "$end"
+printf "%s    Redis commander  http://contenta.ddev.site:8081%s\\n" "$blu" "$end"
+printf "%s    Protainer        http://contenta.ddev.site:9000%s\\n" "$blu" "$end"
 
 printf "\\n%s ... done, see README.md for more info, happy testing! ;)%s\\n" "$grn" "$end"

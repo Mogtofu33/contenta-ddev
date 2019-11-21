@@ -8,4 +8,4 @@ services:
     #volumes:
       #- YOUR_COMPOSER_CACHE_DIR:/home/.composer/cache
     environment:
-      -  VIRTUAL_HOST=contenta.ddev.local
+      -  VIRTUAL_HOST=contenta.ddev.site

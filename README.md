@@ -15,7 +15,7 @@ This project is a basic Drupal [ContentaCMS](https://www.contentacms.org/) / [Co
   - [Download ContentaCMS](#download-contentacms)
   - [Install ContentaCMS](#install-contentacms)
   - [Restart for ContentaJS to connect to ContentaCMS](#restart-for-contentajs-to-connect-to-contentacms)
-  - [(Optionnal) Vue + Nuxt frontend](#optionnal-vue--nuxt-frontend)
+  - [(Optionnal) React + Next frontend](#optionnal-react--next-frontend)
 - [Usage](#usage)
 - [Daily Usage](#daily-usage)
 - [Issues](#issues)
@@ -39,7 +39,7 @@ Include default ddev stack for Drupal (Nginx, Php 7.1 fpm, Mariadb, PhpMyAdmin, 
 ## Quick installation
 
 If you are on Ubuntu 16+/Debian, you can try to use the __install.sh__ script included
-to perform an installation of ContentaCMS, ContentaJS and Contenta Vue Nuxt.
+to perform an installation of ContentaCMS, ContentaJS and Contenta React Next.
 
 ```shell
 curl -fSL https://github.com/mogtofu33/contenta-ddev/archive/master.tar.gz -o contenta-ddev.tar.gz
@@ -95,7 +95,7 @@ Create a local config in __contentajs/config/local.yml__
 
 ```yaml
 cms:
-  host: http://contenta.ddev.local
+  host: http://contenta.ddev.site
 got:
   applicationCache:
     activePlugin: redis
@@ -117,7 +117,7 @@ Prepare contentaCMS folders and init the project
 ```shell
 mkdir -p ./contentacms/web/sites/default
 ddev config --projecttype drupal8 --projectname contenta --docroot contentacms/web \
-  --additional-hostnames front-vue,front-react
+  --additional-hostnames front-react,contentajs
 ```
 
 Copy specific Contenta files from __ddev-files__ in __.ddev__ folder
@@ -161,7 +161,7 @@ cp -r contentacms/web/profiles/contrib/contenta_jsonapi/config/sync/ contentacms
 ```shell
 # Ensure settings and permissions by running ddev config again.
 ddev config --projecttype drupal8 --projectname contenta --docroot contentacms/web \
-  --additional-hostnames front-vue,front-react
+  --additional-hostnames front-react,contentajs
 ```
 
 Install ContentaCMS
@@ -194,34 +194,30 @@ To avoid re-install on restart.
 ddev restart
 ```
 
-### (Optionnal) Vue + Nuxt frontend
+### (Optionnal) React + Next frontend
 
-- [https://github.com/contentacms/contenta_vue_nuxt](https://github.com/contentacms/contenta_vue_nuxt)
+- [https://github.com/contentacms/contenta_react_next](https://github.com/contentacms/contenta_react_next)
 
 ```shell
-curl -fSL https://github.com/contentacms/contenta_vue_nuxt/archive/master.tar.gz -o contenta_vue_nuxt.tar.gz
-tar -xzf contenta_vue_nuxt.tar.gz && mv contenta_vue_nuxt-master contenta_vue_nuxt
-cp ddev-files/docker-compose.vue_nuxt.yaml.dis .ddev/docker-compose.vue_nuxt.yaml
+curl -fSL https://github.com/contentacms/contenta_react_next/archive/master.tar.gz -o contenta_react_next.tar.gz
+tar -xzf contenta_react_next.tar.gz && mv contenta_react_next-master/reactjs contenta_react_next
+cp ddev-files/docker-compose.react_next.yaml.dis .ddev/docker-compose.react_next.yaml
 ```
 
-_Note_: _Npm_ is included in the docker service and used to install this project,
-if you want to install the project locally (npm install), edit and switch
-__command__ line in __.ddev/docker-compose.vue_nuxt.yaml__ file.
+_Note_: _Yarn_ is included in the docker service and used to install this project,
+if you want to install the project locally (yarn install), edit and switch
+__command__ line in __.ddev/docker-compose.react_next.yaml__ file.
 To avoid re-install on each restart you can switch the __command__ after the first
 launch.
 
-Change Nuxt script values in __package.json__:
+Copy the env file and edit the backend url
 
-```json
-"scripts": {
-  "dev": "HOST=0.0.0.0 node_modules/.bin/nuxt",
+```shell
+cp contenta_react_next/.env.default contenta_react_next/.env
 ```
 
-Set Nuxt values in __contenta_vue_nuxt/nuxt.config.js__, change __serverBaseUrl__:
-
-```json
-const serverBaseUrl = 'http://pm2:3000';
-const serverFilesUrl = 'http://contenta.ddev.local';
+```shell
+BACKEND_URL=http://contentajs.ddev.site:3000
 ```
 
 ```shell
@@ -234,31 +230,31 @@ For all ddev commands see [https://ddev.readthedocs.io/en/latest/users/cli-usage
 
 ContentaCMS Backoffice
 
-- [http://contenta.ddev.local](http://contenta.ddev.local)
+- [http://contenta.ddev.site](http://contenta.ddev.site)
 
 ContentaJS
 
-- [http://contenta.ddev.local:3000/api](http://contentajs.ddev.local:3000/api)
+- [http://contentajs.ddev.site/api](http://contentajs.ddev.site/api)
 
-If installed, access the vue frontend
+If installed, access the React frontend
 
-- [http://front-vue.ddev.local](http://front-vue.ddev.local)
+- [http://front-react.ddev.site](http://front-react.ddev.site)
 
 Docker web UI, you can access it on port 9000
 
-- [http://contenta.ddev.local:9000](http://contenta.ddev.local:9000)
+- [http://contenta.ddev.site:9000](http://contenta.ddev.site:9000)
 
 Redis commander on port 8081
 
-- [http://contenta.ddev.local:8081](http://contenta.ddev.local:8081)
+- [http://contenta.ddev.site:8081](http://contenta.ddev.site:8081)
 
 PhpMyAdmin on port 8036
 
-- [http://contenta.ddev.local:8036](http://contenta.ddev.local:8036)
+- [http://contenta.ddev.site:8036](http://contenta.ddev.site:8036)
 
 Mailhog on port 8025
 
-- [http://contenta.ddev.local:8025](http://contenta.ddev.local:8025)
+- [http://contenta.ddev.site:8025](http://contenta.ddev.site:8025)
 
 ## Daily Usage
 
@@ -283,14 +279,10 @@ ddev exec composer --working-dir=/var/www/html/contentacms show -i contentacms/c
 
 View logs, ssh in a container...
 
-- [http://contenta.ddev.local:9000](http://contenta.ddev.local:9000)
+- [http://contenta.ddev.site:9000](http://contenta.ddev.site:9000)
 
 ## Issues
 
 ContentaJS:
 
 - Redis is not used with got (jsonrpc). Proxy is not using Redis.
-
-Vue + Nuxt consumer:
-
-- Menu loading not working.
